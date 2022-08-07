@@ -1,2 +1,2 @@
-﻿import Vue from 'vue/dist/vue.js';
+﻿import Vue from '../node_modules/vue/dist/vue.global.js';
 window.Vue = Vue;  
