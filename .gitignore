@@ -403,3 +403,6 @@ ASALocalRun/
 
 # Local History for Visual Studio
 .localhistory/
+/Properties/serviceDependencies.local.json
+/Properties/serviceDependencies.json
+/Properties/ServiceDependencies/local/mssql1.arm.json
