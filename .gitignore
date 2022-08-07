@@ -406,3 +406,5 @@ ASALocalRun/
 /Properties/serviceDependencies.local.json
 /Properties/serviceDependencies.json
 /Properties/ServiceDependencies/local/mssql1.arm.json
+.vscode/launch.json
+.vscode/tasks.json
