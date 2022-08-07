@@ -1,0 +1,29 @@
+{
+  "name": "industrie-symbiose",
+  "version": "1.0.0",
+  "description": "Hello it's Konstantin \\ Hello it's Leoon!",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KonstantinBlank/Industry-Symbiosis.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/KonstantinBlank/Industry-Symbiosis/issues"
+  },
+  "homepage": "https://github.com/KonstantinBlank/Industry-Symbiosis#readme",
+  "devDependencies": {
+    "babel-core": "^6.26.3",
+    "babel-loader": "^8.2.5",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-stage-0": "^6.24.1",
+    "webpack-cli": "^4.10.0"
+  },
+  "dependencies": {
+    "vue": "^3.2.37"
+  }
+}

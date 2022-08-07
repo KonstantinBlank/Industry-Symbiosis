@@ -5,4 +5,10 @@
     <RootNamespace>Industrie_Symbiose</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Remove="Scripts\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Scripts\" />
+  </ItemGroup>
 </Project>
