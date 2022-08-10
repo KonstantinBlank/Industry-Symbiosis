@@ -5,3 +5,16 @@
 /Backend/UserManagementService/.vs
 /Backend/UserManagementService/IndustrieSymbiosisBackend/obj
 /Backend/UserManagementService/IndustrieSymbiosisBackend/bin/Debug/netcoreapp3.1
+IndustrySymbiosisBackend/.vs/IndustrySymbiosisBackend/xs/project-cache/UserManagement-Debug.json
+IndustrySymbiosisBackend/.vs/IndustrySymbiosisBackend/xs/UserPrefs.xml
+IndustrySymbiosisBackend/UserManagement/obj/Debug/netcoreapp3.1/.NETCoreApp,Version=v3.1.AssemblyAttributes.cs
+IndustrySymbiosisBackend/UserManagement/obj/Debug/netcoreapp3.1/UserManagement.AssemblyInfo.cs
+IndustrySymbiosisBackend/UserManagement/obj/Debug/netcoreapp3.1/UserManagement.AssemblyInfoInputs.cache
+IndustrySymbiosisBackend/UserManagement/obj/Debug/netcoreapp3.1/UserManagement.assets.cache
+IndustrySymbiosisBackend/UserManagement/obj/Debug/netcoreapp3.1/UserManagement.csproj.AssemblyReference.cache
+IndustrySymbiosisBackend/UserManagement/obj/Debug/netcoreapp3.1/UserManagement.GeneratedMSBuildEditorConfig.editorconfig
+IndustrySymbiosisBackend/UserManagement/obj/project.assets.json
+IndustrySymbiosisBackend/UserManagement/obj/project.nuget.cache
+IndustrySymbiosisBackend/UserManagement/obj/UserManagement.csproj.nuget.dgspec.json
+IndustrySymbiosisBackend/UserManagement/obj/UserManagement.csproj.nuget.g.props
+IndustrySymbiosisBackend/UserManagement/obj/UserManagement.csproj.nuget.g.targets
