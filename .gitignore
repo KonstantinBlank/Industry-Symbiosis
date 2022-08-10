@@ -49,3 +49,14 @@ IndustrySymbiosisBackend/UserManagement/obj/UserManagementService.csproj.nuget.d
 IndustrySymbiosisBackend/UserManagement/obj/UserManagementService.csproj.nuget.g.props
 IndustrySymbiosisBackend/UserManagement/obj/UserManagementService.csproj.nuget.g.targets
 .DS_Store
+IndustrySymbiosisBackend/UserManagementService/obj/Debug/netcoreapp3.1/.NETCoreApp,Version=v3.1.AssemblyAttributes.cs
+IndustrySymbiosisBackend/UserManagementService/obj/Debug/netcoreapp3.1/UserManagementService.AssemblyInfo.cs
+IndustrySymbiosisBackend/UserManagementService/obj/Debug/netcoreapp3.1/UserManagementService.AssemblyInfoInputs.cache
+IndustrySymbiosisBackend/UserManagementService/obj/Debug/netcoreapp3.1/UserManagementService.assets.cache
+IndustrySymbiosisBackend/UserManagementService/obj/Debug/netcoreapp3.1/UserManagementService.csproj.AssemblyReference.cache
+IndustrySymbiosisBackend/UserManagementService/obj/Debug/netcoreapp3.1/UserManagementService.GeneratedMSBuildEditorConfig.editorconfig
+IndustrySymbiosisBackend/UserManagementService/obj/project.assets.json
+IndustrySymbiosisBackend/UserManagementService/obj/project.nuget.cache
+IndustrySymbiosisBackend/UserManagementService/obj/UserManagementService.csproj.nuget.dgspec.json
+IndustrySymbiosisBackend/UserManagementService/obj/UserManagementService.csproj.nuget.g.props
+IndustrySymbiosisBackend/UserManagementService/obj/UserManagementService.csproj.nuget.g.targets
