@@ -48,3 +48,4 @@ IndustrySymbiosisBackend/UserManagement/obj/Debug/netcoreapp3.1/UserManagementSe
 IndustrySymbiosisBackend/UserManagement/obj/UserManagementService.csproj.nuget.dgspec.json
 IndustrySymbiosisBackend/UserManagement/obj/UserManagementService.csproj.nuget.g.props
 IndustrySymbiosisBackend/UserManagement/obj/UserManagementService.csproj.nuget.g.targets
+.DS_Store
