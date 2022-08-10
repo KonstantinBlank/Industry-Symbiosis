@@ -13,3 +13,6 @@ namespace IndustrieSymbiosisBackend
         public string Summary { get; set; }
     }
 }
+
+
+// Ich bin eine Änderung
