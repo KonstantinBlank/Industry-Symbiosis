@@ -43,3 +43,5 @@ IndustrySymbiosisBackend/UserManagementService/obj/Debug/netcoreapp3.1/UserManag
 IndustrySymbiosisBackend/UserManagementService/obj/Debug/netcoreapp3.1/UserManagementService.pdb
 IndustrySymbiosisBackend/UserManagementService/obj/Debug/netcoreapp3.1/UserManagementService.RazorTargetAssemblyInfo.cache
 IndustrySymbiosisBackend/UserManagementService/obj/Debug/netcoreapp3.1/staticwebassets/UserManagementService.StaticWebAssets.Manifest.cache
+.DS_Store
+.DS_Store
