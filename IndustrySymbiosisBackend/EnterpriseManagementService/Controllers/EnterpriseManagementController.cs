@@ -41,7 +41,7 @@ namespace EnterpriseManagementService.Controllers
                         {
                             DataTable dataTable = new DataTable();
                             dataTable.Load(dataReader);
-                            JSONString = JsonConvert.SerializeObject(dataTable);                               
+                            JSONString = JsonConvert.SerializeObject(dataTable);
                         }
                     }
                 }
@@ -55,17 +55,14 @@ namespace EnterpriseManagementService.Controllers
             return Ok(JSONString);
         }
 
-
-
-        /*
         /// <summary>
         /// get all users by enterpriseID
         /// </summary>
         /// <returns></returns>
-        [HttpGet("user/{enterpriseID}")] // api/user/{enterpriseID}
+        [HttpGet("user/{enterpriseID}")] // api//user/{enterpriseID}
         public ActionResult GetUsersByEnterpriseID(string enterpriseID)
         {
-            string value = null;
+            string JSONString = string.Empty;
 
             try
             {
@@ -75,21 +72,18 @@ namespace EnterpriseManagementService.Controllers
                 using (SqlConnection connection = new SqlConnection(connectionString)) //auto close connection with using
                 {
                     string queryString;
-                    queryString = $"select * FROM user WHERE fk_enterprise = {enterpriseID};";
-
+                    queryString = @$"SELECT enterprise_user.first_name, enterprise_user.surname, enterprise_user.email
+                                    FROM enterprise_user
+                                    WHERE enterprise_user.fk_enterprise = {enterpriseID};";
 
                     using (SqlCommand command = new SqlCommand(queryString, connection))
                     {
                         command.Connection.Open();
-                        using (SqlDataReader reader = command.ExecuteReader())
+                        using (SqlDataReader dataReader = command.ExecuteReader())
                         {
-                            while (reader.Read())
-                            {
-                                enterpriseID = reader.GetString(0);
-                                value = reader.GetString(1);
-
-                                Console.WriteLine("{0} {1}", enterpriseID, value);
-                            }
+                            DataTable dataTable = new DataTable();
+                            dataTable.Load(dataReader);
+                            JSONString = JsonConvert.SerializeObject(dataTable);
                         }
                     }
                 }
@@ -101,15 +95,8 @@ namespace EnterpriseManagementService.Controllers
 
             Console.WriteLine("API abfrage erfolgreich");
 
-            //return new string[] { id, value };
-            return Ok(new string[] { id, value });
-
-
+            return Ok(JSONString);
         }
-
-        */
-
-
 
     }
 }
