@@ -31,27 +31,51 @@
       </nav>
 
       <div class="background">
+        
+        <p>
+            <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+            Button with data-target
+            </button>
+        </p>
+        <div class="collapse" id="collapseExample">
+            <div class="card card-body">
+                Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident.
+            </div>
+        </div>
 
         <ul class="list-group list-group-flush">
- 
-            <li class="list-group-item" v-for="(item, i) in items" v-bind:key="item">
-                {{item.Fname}} - {{i}}
-                {{item.Fstraße}} 
-                {{item.Fnummer}} 
+                                                <!--v-bind:key = idenfifier -->
+            <li class="list-group-item" v-for="(item, i) in items" v-bind:key="item.id"> 
+
+                <button class="btn" data-toggle="collapse" data-target={{item.id}} aria-expanded="false" aria-controls="collapseExample">
+                Button {{i}}
+                </button>
+                <div class="collapse" id={{item.id}}>
+                        {{item.Fname}}
+                </div>
+
+                <!-- <button class="btn" v-on:click="isVisible = !isVisible">Show{{i}}</button>
+                    <div v-if="isVisible" class="box">
+
+                    {{item.Fname}} - {{i}}
+                    {{item.Fstraße}} 
+                    {{item.Fnummer}} 
+                    </div> -->
             </li>
         </ul>
       </div>
-
-
-
 
 </div>
 
 
 </template>
 
+
+
 <script>
+
 export default {
+
   name: 'StartPage',
   props: {
     msg: String
@@ -60,38 +84,48 @@ export default {
 // benötige Daten aus Datenbank: Adressen und Namen der Netzwerkangehörigen
     data() {
         return {
+
+            
+            isVisible: false,
             items: [
                 {
+                    id: 0,
                     Fname: 'Motzner Straße',
                     Fstraße: 'Motzner Straße',
                     Fnummer: '1',
                 }, 
                 {
+                    id: 1,
+                    Fname: 'Motzner Weg',
+                    Fstraße: 'Motzner Straße',
+                    Fnummer: '1',
+                }, 
+                {
+                    id: 2,
+                    Fname: 'Diese Straße',
+                    Fstraße: 'Motzner Straße',
+                    Fnummer: '1',
+                }, 
+                {
+                    id: 3,
+                    Fname: 'Motzi Straße',
+                    Fstraße: 'Motzner Straße',
+                    Fnummer: '1',
+                }, 
+                {
+                    id: 4,
                     Fname: 'Motzner Straße',
                     Fstraße: 'Motzner Straße',
                     Fnummer: '1',
                 }, 
                 {
+                    id: 5,
                     Fname: 'Motzner Straße',
                     Fstraße: 'Motzner Straße',
                     Fnummer: '1',
                 }, 
                 {
-                    Fname: 'Motzner Straße',
-                    Fstraße: 'Motzner Straße',
-                    Fnummer: '1',
-                }, 
-                {
-                    Fname: 'Motzner Straße',
-                    Fstraße: 'Motzner Straße',
-                    Fnummer: '1',
-                }, 
-                {
-                    Fname: 'Motzner Straße',
-                    Fstraße: 'Motzner Straße',
-                    Fnummer: '1',
-                }, 
-                {
+                    id: 6,
                     Fname: 'Motzner Straße',
                     Fstraße: 'Motzner Straße',
                     Fnummer: '1',
@@ -105,17 +139,23 @@ export default {
 
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style>
+<style scoped>
+
+
+
+.collapsed > .when-open,
+.not-collapsed > .when-closed {
+  display: none;
+}
 
 .background {
-  background-image: none;
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center center;
   padding-bottom: 50%;
 }
 
-button{
+.btn{
   background-color: rgb(0, 50, 14);
   color: white;
   margin: 4% 4%;
