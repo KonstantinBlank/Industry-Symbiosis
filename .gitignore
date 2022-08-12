@@ -79,3 +79,9 @@ IndustrySymbiosisBackend/UserManagementService/obj/Debug/netcoreapp3.1/staticweb
 .DS_Store
 .DS_Store
 >>>>>>> fbdd52d20b287a54ed3c0b75ec5a1c9449e422a8
+/IndustrySymbiosisBackend/UserManagementService/obj/Release/netcoreapp3.1
+/IndustrySymbiosisBackend/EnterpriseManagementService/obj/Release/netcoreapp3.1
+/IndustrySymbiosisBackend/EnterpriseManagementService/obj/Debug/netcoreapp3.1
+/IndustrySymbiosisBackend/EnterpriseManagementService/bin/Debug/netcoreapp3.1
+/IndustrySymbiosisBackend/.vs
+/.vs/Industry-Symbiosis/FileContentIndex
