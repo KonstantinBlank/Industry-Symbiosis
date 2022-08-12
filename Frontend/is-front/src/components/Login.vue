@@ -53,7 +53,7 @@
                     </div>
                     
                         <div class="form-group col-sm-12 text-center flex-column d-flex">
-                          <button @click="$router.push('StartPage')">Anmelden</button>
+                          <button @click="$router.push('StartPage')" class="AnmeldeButton">Anmelden</button>
                         </div>
               
                     <div class="row justify-content-between">
@@ -92,7 +92,7 @@ export default {
 
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style>
+<style scoped>
 
 .background {
   background-image: url('~@/assets/Background1.jpeg');
@@ -102,11 +102,16 @@ export default {
   padding-bottom: 50%;
 }
 
-button{
+.btn{
   background-color: rgb(0, 50, 14);
   color: white;
   margin: 4% 4%;
 
+}
+
+.AnmeldeButton {
+  background-color: rgb(0, 50, 14);
+  color: white;
 }
 
 .btn {
