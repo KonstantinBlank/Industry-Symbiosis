@@ -14,7 +14,9 @@ namespace EnterpriseManagementService.Controllers
         /// <summary>
         /// get all enterprises
         /// </summary>
-        /// <returns></returns>
+        /// <returns>
+        /// json with all enterprises with address
+        /// </returns>
         [HttpGet("enterprises")] // api/enterprisemanagement/enterprises
         public ActionResult GetEnterprises()
         {
@@ -58,7 +60,9 @@ namespace EnterpriseManagementService.Controllers
         /// <summary>
         /// get all users by enterpriseID
         /// </summary>
-        /// <returns></returns>
+        /// <returns>
+        /// json with all users with user attributes from an Enterprise
+        /// </returns>
         [HttpGet("user/{enterpriseID}")] // api//user/{enterpriseID}
         public ActionResult GetUsersByEnterpriseID(string enterpriseID)
         {
