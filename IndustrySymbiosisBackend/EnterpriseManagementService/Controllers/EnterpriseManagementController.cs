@@ -31,7 +31,7 @@ namespace EnterpriseManagementService.Controllers
                 {
                     string queryString;
                     queryString = @"SELECT 
-                                    enterprise.name, enterprise_address.address_record_1, enterprise_address.address_record_2, enterprise_address.street, enterprise_address.house_number, enterprise_address.postcode, enterprise_address.city
+                                    enterprise.id, enterprise.name, enterprise_address.address_record_1, enterprise_address.address_record_2, enterprise_address.street, enterprise_address.house_number, enterprise_address.postcode, enterprise_address.city
                                     FROM enterprise
                                     LEFT JOIN enterprise_address
                                     ON enterprise.fk_address = enterprise_address.id;";
