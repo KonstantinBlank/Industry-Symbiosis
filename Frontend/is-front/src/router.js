@@ -1,26 +1,20 @@
-// import Vue from 'vue';
-// import Router from 'vue-router';
 import { createWebHistory, createRouter } from 'vue-router';
-// import Home from './components/Home.vue';
-import Login from '@/components/Login.vue';
-import Forget from '@/components/Forget.vue';
-import StartPage from '@/components/StartPage.vue';
-
-// Vue.use(Router);
+import Login from './components/Login.vue';
+import Home from './components/Home.vue';
+import AddEnterprise from './components/AddEnterprise.vue'
 
 const routes = [
     {
         path: '/',
+        component: Home
+    },
+    {
+        path: '/Login',
         component: Login,
     },
-
     {
-        path: '/ForgetPassword',
-        component: Forget,
-    },
-    {
-        path: '/StartPage',
-        component: StartPage,
+        path: '/Add',
+        component: AddEnterprise,
     },
 ];
 
@@ -30,6 +24,3 @@ const router = createRouter({
 });
 
 export default router;
-
-
-
