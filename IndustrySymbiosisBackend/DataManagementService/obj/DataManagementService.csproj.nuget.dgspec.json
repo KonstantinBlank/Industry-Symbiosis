@@ -1,0 +1,77 @@
+{
+  "format": 1,
+  "restore": {
+    "/Users/konstantin/Projects/Industry-Symbiosis/IndustrySymbiosisBackend/DataManagementService/DataManagementService.csproj": {}
+  },
+  "projects": {
+    "/Users/konstantin/Projects/Industry-Symbiosis/IndustrySymbiosisBackend/DataManagementService/DataManagementService.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/Users/konstantin/Projects/Industry-Symbiosis/IndustrySymbiosisBackend/DataManagementService/DataManagementService.csproj",
+        "projectName": "DataManagementService",
+        "projectPath": "/Users/konstantin/Projects/Industry-Symbiosis/IndustrySymbiosisBackend/DataManagementService/DataManagementService.csproj",
+        "packagesPath": "/Users/konstantin/.nuget/packages/",
+        "outputPath": "/Users/konstantin/Projects/Industry-Symbiosis/IndustrySymbiosisBackend/DataManagementService/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/Users/konstantin/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "netcoreapp3.1"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "netcoreapp3.1": {
+            "targetAlias": "netcoreapp3.1",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "netcoreapp3.1": {
+          "targetAlias": "netcoreapp3.1",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Ref",
+              "version": "[3.1.10, 3.1.10]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Host.osx-x64",
+              "version": "[3.1.27, 3.1.27]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Ref",
+              "version": "[3.1.0, 3.1.0]"
+            }
+          ],
+          "frameworkReferences": {
+            "Microsoft.AspNetCore.App": {
+              "privateAssets": "none"
+            },
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/6.0.302/RuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}
