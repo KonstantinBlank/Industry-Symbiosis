@@ -31,10 +31,10 @@ namespace EnterpriseManagementService.Controllers
                 {
                     string queryString;
                     queryString = @"SELECT 
-                                    enterprise.id, enterprise.name, enterprise_address.address_record_1, enterprise_address.address_record_2, enterprise_address.street, enterprise_address.house_number, enterprise_address.postcode, enterprise_address.city
+                                    enterprise.id, enterprise.name, post_address.address_record_1, post_address.address_record_2, post_address.street, post_address.house_number, post_address.postcode, post_address.city
                                     FROM enterprise
-                                    LEFT JOIN enterprise_address
-                                    ON enterprise.fk_address = enterprise_address.id;";
+                                    LEFT JOIN post_address
+                                    ON enterprise.fk_address = post_address.id;";
 
                     using (SqlCommand command = new SqlCommand(queryString, connection))
                     {

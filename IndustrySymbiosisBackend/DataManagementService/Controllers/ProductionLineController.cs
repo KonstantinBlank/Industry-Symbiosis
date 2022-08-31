@@ -26,7 +26,6 @@ namespace DataManagementService.Controllers
         {
             string JSONString = string.Empty;
 
-
             try
             {
                 string connectionString;

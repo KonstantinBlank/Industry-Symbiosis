@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using DataManagementService.Service;
+﻿using DataManagementService.Service;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 
 namespace DataManagementService
 {
@@ -26,7 +20,7 @@ namespace DataManagementService
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            services.AddTransient<ProductionFacilityProviderService>(); //Add the Service so that the Controller can grap it 
+            services.AddTransient<ProductionFacilityService>(); //Add the Service so that the Controller can grap it 
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
