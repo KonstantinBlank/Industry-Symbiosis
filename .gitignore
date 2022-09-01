@@ -171,3 +171,11 @@ IndustrySymbiosisBackend/MatchingService/obj/MatchingService.csproj.nuget.dgspec
 IndustrySymbiosisBackend/MatchingService/obj/MatchingService.csproj.nuget.g.props
 IndustrySymbiosisBackend/MatchingService/obj/project.assets.json
 IndustrySymbiosisBackend/MatchingService/obj/project.nuget.cache
+/IndustrySymbiosisBackend/DataManagementService/bin/Release/netcoreapp3.1/runtimes/unix/lib/netcoreapp2.1/System.Data.SqlClient.dll
+/IndustrySymbiosisBackend/DataManagementService/bin/Release/netcoreapp3.1/runtimes/win/lib/netcoreapp2.1/System.Data.SqlClient.dll
+/IndustrySymbiosisBackend/DataManagementService/bin/Release/netcoreapp3.1/runtimes/win-arm64/native/sni.dll
+/IndustrySymbiosisBackend/DataManagementService/bin/Release/netcoreapp3.1/runtimes/win-x64/native/sni.dll
+/IndustrySymbiosisBackend/DataManagementService/bin/Release/netcoreapp3.1/runtimes/win-x86/native/sni.dll
+/IndustrySymbiosisBackend/DataManagementService/bin/Release/netcoreapp3.1/DataManagementService.exe
+/IndustrySymbiosisBackend/DataManagementService/bin/Release/netcoreapp3.1/Newtonsoft.Json.dll
+/IndustrySymbiosisBackend/DataManagementService/bin/Release/netcoreapp3.1/System.Data.SqlClient.dll
