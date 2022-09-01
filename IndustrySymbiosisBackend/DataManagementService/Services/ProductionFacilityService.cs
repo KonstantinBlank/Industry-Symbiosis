@@ -16,8 +16,6 @@ namespace DataManagementService.Service
         {
         }
 
-        //update
-
         public string GetAsJSONStringByEnterpriseId(int enterpriseId)
         {
             string productionLinesOfEnterpriseasJSON = string.Empty;
@@ -69,6 +67,7 @@ namespace DataManagementService.Service
 
                     queryString = @"INSERT INTO post_address
 			                            (address_record_1,
+                                        address_record_2,
 			                            street,
                                         house_number,
                                         postcode,
@@ -129,9 +128,11 @@ namespace DataManagementService.Service
             return JsonConvert.SerializeObject(productionFacility);
         }
 
-        public string Update(int productionFacilityId, int enterpriseId, string facilityName, string postAddressRecord1, string postAddressRecord2, string street, string houseNumber, string postcode, string city)
+        public int Update(int enterpriseId, int productionFacilityId, int postAddressId, string? facilityName, string? postAddressRecord1, string? postAddressRecord2, string? street, string? houseNumber, string? postcode, string? city)
         {
-            ProductionFacility productionFacility = new ProductionFacility(productionFacilityId, enterpriseId, facilityName, postAddressRecord1, postAddressRecord2, street, houseNumber, postcode, city);
+            int result = -1;
+            ProductionFacility productionFacility = new ProductionFacility(productionFacilityId, postAddressId, enterpriseId, facilityName, postAddressRecord1, postAddressRecord2, street, houseNumber, postcode, city);
+            
             try
             {
                 string connectionString;
@@ -140,18 +141,40 @@ namespace DataManagementService.Service
                 using (SqlConnection connection = new SqlConnection(connectionString)) //auto close connection with using
                 {
 
-                    string queryString;
+                    
                     //       UPDATE _table_name_
                     //   SET _column1_ = _value1_, _column2_ = _value2_, ...  
                     //WHERE _condition_;
-                    string result = "";
+
+                    SqlQueryStringBuilder sqlQueryStringBuilder = new SqlQueryStringBuilder("production_facility", "production_facility.id", productionFacilityId.ToString());
+
+                    if (facilityName != null)
+                    {
+                        sqlQueryStringBuilder.AddqueryArg("name");
+                    }
+
+                    string queryString = sqlQueryStringBuilder.GetSqlQueryString();
+                    Console.WriteLine(queryString);
+                    /*
                     
-                        result += updateName(facilityName);
+                    UPDATE production_facility 
+                    SET name = @name 
+                    WHERE production_facility.id = 25
 
 
-                    //https://stackoverflow.com/questions/9890456/update-sql-statement-with-unknown-name-amount-of-params/9891276#9891276
 
-                    queryString = @"UPDATE production_facility
+
+                    productionFacilityId
+                    enterpriseId
+                    facilityName
+                    postAddressRecord1
+                    postAddressRecord2
+                    street
+                    houseNumber
+                    postcode
+                    city
+
+                                        queryString = @"UPDATE production_facility
                                     SET 
 			                            (address_record_1,
 			                            street,
@@ -166,20 +189,34 @@ namespace DataManagementService.Service
 		                                @postcode,
                                         @city);
                                     SELECT SCOPE_IDENTITY()";
+                   */
+
+
+                    //https://stackoverflow.com/questions/9890456/update-sql-statement-with-unknown-name-amount-of-params/9891276#9891276
+
+
 
                     using (SqlCommand command = new SqlCommand(queryString, connection))
                     {
                         // Insert parameters
-                        command.Parameters.AddWithValue("@postAddressRecord1", productionFacility.PostAddressRecord1);
+                        
+                        if (!string.IsNullOrWhiteSpace(facilityName))
+                        {
+
+                            command.Parameters.AddWithValue("@name", productionFacility.FacilityName);
+
+                        }
+
+                        /*
                         command.Parameters.AddWithValue("@postAddressRecord2", productionFacility.PostAddressRecord2);
                         command.Parameters.AddWithValue("@street", productionFacility.Street);
                         command.Parameters.AddWithValue("@houseNumber", productionFacility.HouseNumber);
                         command.Parameters.AddWithValue("@postcode", productionFacility.Postcode);
                         command.Parameters.AddWithValue("@city", productionFacility.City);
+                        */
                         command.Connection.Open();
-                        //result = command.ExecuteNonQuery();
-                        int postAddressId = Convert.ToInt32(command.ExecuteScalar());
-                        productionFacility.SetPostAddressId(postAddressId);
+                        result = command.ExecuteNonQuery();
+
                     }
 
                     
@@ -193,16 +230,7 @@ namespace DataManagementService.Service
             }
 
 
-            return JsonConvert.SerializeObject(productionFacility);
-        }
-
-        private string updateName(string facilityName)
-        {
-            if (!string.IsNullOrWhiteSpace(facilityName))
-            {
-
-            }
-            return "";
+            return result;
         }
     }
 }
