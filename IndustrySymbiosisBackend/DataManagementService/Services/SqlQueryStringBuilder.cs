@@ -22,9 +22,9 @@ namespace DataManagementService.Services
             QueryStringSqlUpdatePart = @$"UPDATE {tableName}";
             QueryStringSqlWherePart = $" WHERE {idname} = {id}  ";
 
-            //       UPDATE _table_name_
+            //   UPDATE _table_name_
             //   SET _column1_ = _value1_, _column2_ = _value2_, ...  
-            //WHERE _condition_;
+            //   WHERE _condition_;
         }
 
 
@@ -65,6 +65,11 @@ namespace DataManagementService.Services
             }
 
             QueryStringSqlSetPart = stringbuilder.ToString();
+        }
+
+        public static implicit operator string(SqlQueryStringBuilder v)
+        {
+            throw new NotImplementedException();
         }
     }
 }
