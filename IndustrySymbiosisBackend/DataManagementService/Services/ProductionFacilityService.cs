@@ -141,94 +141,139 @@ namespace DataManagementService.Service
                 using (SqlConnection connection = new SqlConnection(connectionString)) //auto close connection with using
                 {
 
-                    
-                    //       UPDATE _table_name_
-                    //   SET _column1_ = _value1_, _column2_ = _value2_, ...  
-                    //WHERE _condition_;
-
-                    SqlQueryStringBuilder sqlQueryStringBuilder = new SqlQueryStringBuilder("production_facility", "production_facility.id", productionFacilityId.ToString());
+                    SqlQueryStringBuilder sqlQueryStringBuilderFacilityAttributes = new SqlQueryStringBuilder("production_facility_view", "production_facility_id", productionFacilityId.ToString()); 
 
                     if (facilityName != null)
                     {
-                        sqlQueryStringBuilder.AddqueryArg("name");
+                        sqlQueryStringBuilderFacilityAttributes.AddqueryArg("production_facility_name");
                     }
 
-                    string queryString = sqlQueryStringBuilder.GetSqlQueryString();
-                    Console.WriteLine(queryString);
+                    string queryStringFacilityAttributes = sqlQueryStringBuilderFacilityAttributes.GetSqlQueryString();
+                    Console.WriteLine(queryStringFacilityAttributes);
+
+
+                    SqlQueryStringBuilder sqlQueryStringBuilderPostAddressAttributes = new SqlQueryStringBuilder("production_facility_view", "production_facility_id", productionFacilityId.ToString());
+
+                    if (postAddressRecord1 != null)
+                    {
+                        sqlQueryStringBuilderPostAddressAttributes.AddqueryArg("address_record_1");
+                    }
+
+                    if (postAddressRecord2 != null)
+                    {
+                        sqlQueryStringBuilderPostAddressAttributes.AddqueryArg("address_record_1");
+                    }
+
+                    if (city != null)
+                    {
+                        sqlQueryStringBuilderPostAddressAttributes.AddqueryArg("city");
+                    }
+
+                    if (street != null)
+                    {
+                        sqlQueryStringBuilderPostAddressAttributes.AddqueryArg("street");
+                    }
+
+                    if (postcode != null)
+                    {
+                        sqlQueryStringBuilderPostAddressAttributes.AddqueryArg("postcode");
+                    }
+
+                    if (houseNumber != null)
+                    {
+                        sqlQueryStringBuilderPostAddressAttributes.AddqueryArg("house_number");
+                    }
+
+
+                    string queryStringPostAddressAttributes = sqlQueryStringBuilderPostAddressAttributes.GetSqlQueryString();
+                    Console.WriteLine(queryStringPostAddressAttributes);
+
                     /*
-                    
-                    UPDATE production_facility 
-                    SET name = @name 
-                    WHERE production_facility.id = 25
 
+                    CREATE VIEW production_facility_view
+                    AS
+                    SELECT production_facility.id as production_facility_id, production_facility.name as production_facility_name, fk_post_address, post_address.id as post_address_id, address_record_1, address_record_2, street, house_number, postcode, city 
+                    FROM production_facility
+                    LEFT JOIN post_address
+                    ON production_facility.fk_post_address = post_address.id
 
-
-
-                    productionFacilityId
-                    enterpriseId
-                    facilityName
-                    postAddressRecord1
-                    postAddressRecord2
-                    street
-                    houseNumber
-                    postcode
-                    city
-
-                                        queryString = @"UPDATE production_facility
-                                    SET 
-			                            (address_record_1,
-			                            street,
-                                        house_number,
-                                        postcode,
-                                        city)
-                                    VALUES
-                                        (@postAddressRecord1,
-                                        @postAddressRecord2,
-		                                @street,
-		                                @houseNumber,
-		                                @postcode,
-                                        @city);
-                                    SELECT SCOPE_IDENTITY()";
                    */
 
 
-                    //https://stackoverflow.com/questions/9890456/update-sql-statement-with-unknown-name-amount-of-params/9891276#9891276
-
-
-
-                    using (SqlCommand command = new SqlCommand(queryString, connection))
+                    using (SqlCommand command = new SqlCommand(queryStringFacilityAttributes, connection))
                     {
-                        // Insert parameters
-                        
-                        if (!string.IsNullOrWhiteSpace(facilityName))
-                        {
-
-                            command.Parameters.AddWithValue("@name", productionFacility.FacilityName);
-
-                        }
-
-                        /*
-                        command.Parameters.AddWithValue("@postAddressRecord2", productionFacility.PostAddressRecord2);
-                        command.Parameters.AddWithValue("@street", productionFacility.Street);
-                        command.Parameters.AddWithValue("@houseNumber", productionFacility.HouseNumber);
-                        command.Parameters.AddWithValue("@postcode", productionFacility.Postcode);
-                        command.Parameters.AddWithValue("@city", productionFacility.City);
-                        */
                         command.Connection.Open();
-                        result = command.ExecuteNonQuery();
 
+
+                        // Start a local transaction.
+                        SqlTransaction sqlTran = connection.BeginTransaction();
+
+                        // Enlist a command in the current transaction.
+                        //command = connection.CreateCommand();
+                        command.Transaction = sqlTran;
+
+                        try
+                        {
+                            // Insert parameters
+                            if (!string.IsNullOrWhiteSpace(facilityName))
+                            {
+                                command.Parameters.AddWithValue("@production_facility_name", productionFacility.FacilityName);
+                            }
+
+                            result = command.ExecuteNonQuery();
+
+                            command.CommandText = queryStringPostAddressAttributes;
+
+
+                            if (!string.IsNullOrWhiteSpace(productionFacility.PostAddressRecord1))
+                            {
+                                command.Parameters.AddWithValue("@address_record_1", productionFacility.PostAddressRecord1);
+                            }
+
+                            if (!string.IsNullOrWhiteSpace(productionFacility.PostAddressRecord2))
+                            {
+                                command.Parameters.AddWithValue("@address_record_2", productionFacility.PostAddressRecord2);
+                            }
+
+                            if (!string.IsNullOrWhiteSpace(productionFacility.Street))
+                            {
+                                command.Parameters.AddWithValue("@street", productionFacility.Street);
+                            }
+
+                            if (!string.IsNullOrWhiteSpace(productionFacility.HouseNumber))
+                            {
+                                command.Parameters.AddWithValue("@house_number", productionFacility.HouseNumber);
+                            }
+
+                            if (!string.IsNullOrWhiteSpace(productionFacility.Postcode))
+                            {
+                                command.Parameters.AddWithValue("@postcode", productionFacility.Postcode);
+                            }
+
+                            if (!string.IsNullOrWhiteSpace(productionFacility.City))
+                            {
+                                command.Parameters.AddWithValue("@city", productionFacility.City);
+                            }
+
+                            //command.Connection.Open();
+                            result = command.ExecuteNonQuery();
+
+                            // Commit the transaction.
+                            sqlTran.Commit();
+                        }
+                        catch (SqlException error)
+                        {
+                            sqlTran.Rollback();
+                            throw;
+                        }
                     }
-
-                    
-
                 }
             }
             catch (SqlException error)
             {
-                Console.WriteLine("Adresse oder facility konnte nicht erstellt werden");
+                Console.WriteLine("Adresse oder facility konnte nicht verändert werden");
                 Console.WriteLine(error.ToString());
             }
-
 
             return result;
         }
