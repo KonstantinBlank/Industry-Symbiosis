@@ -1,76 +1,63 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Threading.Tasks;
+using DataManagementService.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 
 namespace DataManagementService.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/")]
     public class ProductionLineProcessController : ControllerBase
     {
+        private ProductionLineProcessService _productionLineProcessService;
+
+        public ProductionLineProcessController()
+        {
+            _productionLineProcessService = new ProductionLineProcessService();
+        }
 
         /// <summary>
-        /// get all Production Lines by enterpriseID
+        /// get all production lines from a production facility
         /// </summary>
         /// <returns>
-        /// json with all Production Lines  with Production Line attributes from an Enterprise
+        /// json with all production lines from the specified production facility
         /// </returns>
-        [HttpGet("productionlineprocesses/enterprises/{enterpriseID}")]
-        public ActionResult GetProductionFacilitysByEnterpriseID(string enterpriseID)
+        [HttpGet("production_line_processes/{productionLineId}")]
+        public ActionResult GetProductionLineProcesses(int productionLineId)
         {
-            string JSONString = string.Empty;
-
-
-            try
-            {
-                string connectionString;
-                connectionString = "Data Source=tcp:insym.database.windows.net,1433;Initial Catalog=Industrie-Symbiose_db;User Id=insym_adm@insym;Password=jio:90u?..Q++";
-
-                using (SqlConnection connection = new SqlConnection(connectionString)) //auto close connection with using
-                {
-                    string queryString;
-                    queryString = @$"SELECT enterprise_user.first_name, enterprise_user.surname, enterprise_user.email
-                                    FROM enterprise_user
-                                    WHERE enterprise_user.fk_enterprise = {enterpriseID};";
-
-                    using (SqlCommand command = new SqlCommand(queryString, connection))
-                    {
-                        command.Connection.Open();
-                        using (SqlDataReader dataReader = command.ExecuteReader())
-                        {
-                            DataTable dataTable = new DataTable();
-                            dataTable.Load(dataReader);
-                            JSONString = JsonConvert.SerializeObject(dataTable);
-                        }
-                    }
-                }
-            }
-            catch (SqlException e)
-            {
-                Console.WriteLine(e.ToString());
-            }
+            string productionLineProcessesJSON = _productionLineProcessService.Get(productionLineId);
 
             Console.WriteLine("API abfrage erfolgreich");
 
-            return Ok(JSONString);
-    }
-
-
-        // set production facility by enterpriseID
-
-        [HttpPost("productionfacilitys/")]
-        public ActionResult CreateProductionFacilitysByEnterpriseID(string facilityProcess)
-        {
-            return Ok();
+            return Ok(productionLineProcessesJSON);
         }
 
+        /// <summary>
+        /// create production line
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost("production_line_processes/create/")]
+        public IActionResult CreateProductionLineProcess(int productionLineId, string name)
+        {
+            string CreatedProductionLineProcessJSON = _productionLineProcessService.Create(productionLineId, name);
 
+            Console.WriteLine("API Abfrage durchgeführt");
+
+            return Ok(CreatedProductionLineProcessJSON);
+        }
+
+        /// <summary>
+        /// update a production line
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost("production_line_processes/update/")]
+        public IActionResult UpdateProductionLineProcess(int productionLineId, string name)
+        {
+            int UpdatedProductionLineProcesses = _productionLineProcessService.Update(productionLineId, name);
+
+            Console.WriteLine("API Abfrage durchgeführt");
+
+            return Ok(UpdatedProductionLineProcesses);
+        }
     }
 }
 
