@@ -1,0 +1,7 @@
+/Users/konstantin/Projects/Industry-Symbiosis/IndustrySymbiosisBackend/MatchingService/obj/Release/netcoreapp3.1/PubTmp/Out/MatchingService
+/Users/konstantin/Projects/Industry-Symbiosis/IndustrySymbiosisBackend/MatchingService/obj/Release/netcoreapp3.1/PubTmp/Out/appsettings.Development.json
+/Users/konstantin/Projects/Industry-Symbiosis/IndustrySymbiosisBackend/MatchingService/obj/Release/netcoreapp3.1/PubTmp/Out/appsettings.json
+/Users/konstantin/Projects/Industry-Symbiosis/IndustrySymbiosisBackend/MatchingService/obj/Release/netcoreapp3.1/PubTmp/Out/MatchingService.dll
+/Users/konstantin/Projects/Industry-Symbiosis/IndustrySymbiosisBackend/MatchingService/obj/Release/netcoreapp3.1/PubTmp/Out/MatchingService.deps.json
+/Users/konstantin/Projects/Industry-Symbiosis/IndustrySymbiosisBackend/MatchingService/obj/Release/netcoreapp3.1/PubTmp/Out/MatchingService.runtimeconfig.json
+/Users/konstantin/Projects/Industry-Symbiosis/IndustrySymbiosisBackend/MatchingService/obj/Release/netcoreapp3.1/PubTmp/Out/MatchingService.pdb
