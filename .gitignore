@@ -204,3 +204,4 @@ IndustrySymbiosisBackend/MatchingService/obj/MatchingService.csproj.nuget.g.prop
 IndustrySymbiosisBackend/MatchingService/obj/project.assets.json
 IndustrySymbiosisBackend/MatchingService/obj/project.nuget.cache
 IndustrySymbiosisBackend/DataManagementService/obj/Release/netcoreapp3.1/PublishOutputs.7d6aece23c.txt
+IndustrySymbiosisBackend/DataManagementService/bin/Release/netcoreapp3.1/DataManagementService.runtimeconfig.dev.json
