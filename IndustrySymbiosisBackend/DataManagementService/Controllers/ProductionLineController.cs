@@ -1,70 +1,64 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Threading.Tasks;
+using DataManagementService.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 
 namespace DataManagementService.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/")]
     public class ProductionLineController : ControllerBase
     {
+        private ProductionLineService _productionLineService;
+
+        public ProductionLineController()
+        {
+            _productionLineService = new ProductionLineService();
+        }
 
         /// <summary>
-        /// get all Production Lines by enterpriseID
+        /// get all production lines from a production facility
         /// </summary>
         /// <returns>
-        /// json with all Production Lines  with Production Line attributes from an Enterprise
+        /// json with all production lines from the specified production facility
         /// </returns>
-        [HttpGet("productionlines/{enterpriseID}")]
-        public ActionResult GetProductionLinesByEnterpriseID(string enterpriseID)
+        [HttpGet("production_lines/{productionFacilityId}")]
+        public ActionResult GetProductionLines(int productionFacilityId)
         {
-            string JSONString = string.Empty;
-
-            try
-            {
-                string connectionString;
-                connectionString = "Data Source=tcp:insym.database.windows.net,1433;Initial Catalog=Industrie-Symbiose_db;User Id=insym_adm@insym;Password=jio:90u?..Q++";
-
-                using (SqlConnection connection = new SqlConnection(connectionString)) //auto close connection with using
-                {
-                    string queryString;
-                    queryString = @$"SELECT enterprise_user.first_name, enterprise_user.surname, enterprise_user.email
-                                    FROM enterprise_user
-                                    WHERE enterprise_user.fk_enterprise = {enterpriseID};";
-
-                    using (SqlCommand command = new SqlCommand(queryString, connection))
-                    {
-                        command.Connection.Open();
-                        using (SqlDataReader dataReader = command.ExecuteReader())
-                        {
-                            DataTable dataTable = new DataTable();
-                            dataTable.Load(dataReader);
-                            JSONString = JsonConvert.SerializeObject(dataTable);
-                        }
-                    }
-                }
-            }
-            catch (SqlException e)
-            {
-                Console.WriteLine(e.ToString());
-            }
-
+            string productionLinesJSON = _productionLineService.Get(productionFacilityId);
+                
             Console.WriteLine("API abfrage erfolgreich");
 
-            return Ok(JSONString);
-    }
-    
-    
-        //set production facility by ProductionFacilityID
-    
-    
-    
+            return Ok(productionLinesJSON);
+        }
+
+        /// <summary>
+        /// create production line
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost("production_lines/create/")]
+        public IActionResult CreateProductionLine(int productionFacilityId, string name)
+        {
+            string CreatedProductionLinesAsJSON = _productionLineService.Create(productionFacilityId, name);
+
+            Console.WriteLine("API Abfrage durchgeführt");
+
+            return Ok(CreatedProductionLinesAsJSON);
+        }
+
+        /// <summary>
+        /// update a production line
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost("production_lines/update/")]
+        public IActionResult UpdateProductionLine(int productionLineId, string name)
+        {
+            int CreatedProductionLines = _productionLineService.Update(productionLineId, name);
+
+            Console.WriteLine("API Abfrage durchgeführt");
+
+            return Ok(CreatedProductionLines);
+        }
+
     }
 }
 
