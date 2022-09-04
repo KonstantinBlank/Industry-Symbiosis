@@ -6,21 +6,20 @@ namespace DataManagementService.Services
 {
     public class SqlQueryStringBuilder
     {
-        private List<string> SqlArgList = new List<string>();
+        private List<string> _sqlArgList = new List<string>();
 
-        private string QueryString = string.Empty;
+        private string _queryString = string.Empty;
 
-        private string QueryStringSqlUpdatePart = string.Empty;
-        private string QueryStringSqlSetPart = string.Empty;
-        private string QueryStringSqlWherePart = string.Empty;
+        private string _queryStringSqlUpdatePart = string.Empty;
+        private string _queryStringSqlSetPart = string.Empty;
+        private string _queryStringSqlWherePart = string.Empty;
 
 
-
-        public SqlQueryStringBuilder(string tableName, string idname, string id)
+        public SqlQueryStringBuilder(string tableName, string idName, string id)
         {
 
-            QueryStringSqlUpdatePart = @$"UPDATE {tableName}";
-            QueryStringSqlWherePart = $" WHERE {idname} = {id}  ";
+            _queryStringSqlUpdatePart = $"UPDATE {tableName}";
+            _queryStringSqlWherePart = $" WHERE {idName} = {id}";
 
             //   UPDATE _table_name_
             //   SET _column1_ = _value1_, _column2_ = _value2_, ...  
@@ -28,11 +27,15 @@ namespace DataManagementService.Services
         }
 
 
-        public void AddqueryArg(string arg)
+        public void AddQueryArg(string arg)
         {
             if (!string.IsNullOrWhiteSpace(arg))
             {
-                SqlArgList.Add(arg);
+                _sqlArgList.Add(arg);
+            }
+            else
+            {
+                throw new ArgumentException("The argument 'arg' can not be null or empty. Please reference a string value.");
             }
         }
 
@@ -40,12 +43,10 @@ namespace DataManagementService.Services
         {
             querySetBuilder();
 
-            QueryString = new StringBuilder().Append(QueryStringSqlUpdatePart).Append(QueryStringSqlSetPart).Append(QueryStringSqlWherePart).ToString();
+            _queryString = new StringBuilder().Append(_queryStringSqlUpdatePart).Append(_queryStringSqlSetPart).Append(_queryStringSqlWherePart).ToString();
 
-            return QueryString;
+            return _queryString;
         }
-
-
 
         private void querySetBuilder()
         {
@@ -53,7 +54,7 @@ namespace DataManagementService.Services
 
             stringbuilder.Append(" SET ");
             bool firstlab = true;
-            foreach (string sqlArg in SqlArgList)
+            foreach (string sqlArg in _sqlArgList)
             {
                 if (!firstlab)
                 {
@@ -64,12 +65,7 @@ namespace DataManagementService.Services
                 stringbuilder.Append(sqlArg);
             }
 
-            QueryStringSqlSetPart = stringbuilder.ToString();
-        }
-
-        public static implicit operator string(SqlQueryStringBuilder v)
-        {
-            throw new NotImplementedException();
+            _queryStringSqlSetPart = stringbuilder.ToString();
         }
     }
 }

@@ -16,23 +16,23 @@ namespace DataManagementService.Controllers
     [Route("api/")]
     public class ProductionFacilityController : ControllerBase
     {
-        public ProductionFacilityService productionFacilityService { get; }
+        private ProductionFacilityService _productionFacilityService { get; }
 
         public ProductionFacilityController(ProductionFacilityService productionFacilityService)
         {
-            this.productionFacilityService = productionFacilityService;
+            _productionFacilityService = productionFacilityService;
         }
 
         /// <summary>
-        /// get all Production Lines by enterpriseID
+        /// get all production facilities by enterpriseId
         /// </summary>
         /// <returns>
-        /// json with all Production Lines with Production Line attributes from an Enterprise
+        /// json with all production facilities from the specified enterprise
         /// </returns>
-        [HttpGet("productionfacilities/get/{enterpriseID}")]
-        public ActionResult GetProductionFacilities(int enterpriseID)
+        [HttpGet("production_facilities/get/{enterpriseId}")]
+        public ActionResult GetProductionFacilities(int enterpriseId)
         {
-            string productionLinesOfEnterpriseasJSON = productionFacilityService.GetAsJSONStringByEnterpriseId(enterpriseID);
+            string productionLinesOfEnterpriseasJSON = _productionFacilityService.Get(enterpriseId);
 
             Console.WriteLine("API abfrage erfolgreich");
 
@@ -40,13 +40,13 @@ namespace DataManagementService.Controllers
         }
 
         /// <summary>
-        /// set production facility by enterpriseID
+        /// create production facility
         /// </summary>
         /// <returns></returns>
-        [HttpPost("productionfacility/create/")] // zu testzecken entfernt: {enterpriseID}/
+        [HttpPost("production_facilities/create/")] // zu testzecken entfernt: {enterpriseID}/
         public IActionResult CreateProductionFacility(int enterpriseId, string facilityName, string postAddressRecord1, string postAddressRecord2, string street, string houseNumber, string postcode, string city)
         {
-            string CreatedProductionFacilityasJSON = productionFacilityService.Create(enterpriseId, facilityName, postAddressRecord1, postAddressRecord2, street, houseNumber, postcode, city);
+            string CreatedProductionFacilityasJSON = _productionFacilityService.Create(enterpriseId, facilityName, postAddressRecord1, postAddressRecord2, street, houseNumber, postcode, city);
 
             Console.WriteLine("API Abfrage durchgeführt");
 
@@ -55,10 +55,10 @@ namespace DataManagementService.Controllers
 
        
 
-        [HttpPost("productionfacility/update/")]
+        [HttpPost("production_facilities/update/")]
         public IActionResult UpdateProductionFacility(int enterpriseId, int productionFacilityId, int postAddressId, string? facilityName = null, string? postAddressRecord1 = null, string? postAddressRecord2 = null, string? street = null, string? houseNumber = null, string? postcode = null, string? city = null)
         {
-            int result = productionFacilityService.Update(enterpriseId, productionFacilityId, postAddressId, facilityName, postAddressRecord1, postAddressRecord2, street, houseNumber, postcode, city);
+            int result = _productionFacilityService.Update(enterpriseId, productionFacilityId, postAddressId, facilityName, postAddressRecord1, postAddressRecord2, street, houseNumber, postcode, city);
 
             Console.WriteLine("API Abfrage durchgeführt");
 
