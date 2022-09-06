@@ -155,3 +155,9 @@ IndustrySymbiosisBackend/DataManagementService/obj/Debug/netcoreapp3.1/DataManag
 IndustrySymbiosisBackend/DataManagementService/obj/project.assets.json
 IndustrySymbiosisBackend/DataManagementService/obj/project.nuget.cache
 IndustrySymbiosisBackend/MatchingService/obj/Debug/netcoreapp3.1/MatchingService.assets.cache
+/IndustrySymbiosisBackend/DataManagementService/bin/Release/netcoreapp3.1/runtimes/unix/lib/netcoreapp2.1/System.Data.SqlClient.dll
+/IndustrySymbiosisBackend/DataManagementService/bin/Release/netcoreapp3.1/runtimes/win/lib/netcoreapp2.1/System.Data.SqlClient.dll
+/IndustrySymbiosisBackend/DataManagementService/bin/Release/netcoreapp3.1/runtimes/win-x64/native/sni.dll
+/IndustrySymbiosisBackend/DataManagementService/bin/Release/netcoreapp3.1/runtimes/win-arm64/native/sni.dll
+/IndustrySymbiosisBackend/DataManagementService/bin/Release/netcoreapp3.1/runtimes/win-x86/native/sni.dll
+/IndustrySymbiosisBackend/DataManagementService/bin/Release/netcoreapp3.1/DataManagementService.exe
