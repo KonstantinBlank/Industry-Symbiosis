@@ -7,7 +7,7 @@ namespace DataManagementService.Data
     public class ProductionFacility
     {
         [JsonPropertyName("facilityName")]
-        public int ProductionFacilityId { get; private set; }
+        public int Id { get; private set; }
         public int PostAddressId { get; private set; }
         public int EnterpriseId { get; private set; }
         public string? FacilityName { get; private set; }
@@ -20,7 +20,7 @@ namespace DataManagementService.Data
 
         public ProductionFacility(int productionFacilityId, int postAddressId, int enterpriseId, string? facilityName, string? postAddressRecord1, string? postAddressRecord2,  string? street, string? houseNumber, string? postcode, string? city)
         {
-            ProductionFacilityId = productionFacilityId;
+            Id = productionFacilityId;
             PostAddressId = postAddressId;
             EnterpriseId = enterpriseId;
             FacilityName = facilityName;
@@ -34,6 +34,7 @@ namespace DataManagementService.Data
 
         public ProductionFacility(int enterpriseId, string facilityName, string postAddressRecord1, string postAddressRecord2, string street, string houseNumber, string postcode, string city)
         {
+            Id = -1;
             EnterpriseId = enterpriseId;
             FacilityName = facilityName ?? throw new ArgumentNullException(nameof(facilityName));
             PostAddressRecord1 = postAddressRecord1;
@@ -51,7 +52,14 @@ namespace DataManagementService.Data
 
         public void SetProductionFacilityId(int productionFacilityId)
         {
-            ProductionFacilityId = productionFacilityId;
+            if (Id == -1)
+            {
+                Id = productionFacilityId;
+            }
+            else
+            {
+                throw new InvalidOperationException($"The production facility id was already set. It's {Id}.");
+            }
         }
     }
 }
