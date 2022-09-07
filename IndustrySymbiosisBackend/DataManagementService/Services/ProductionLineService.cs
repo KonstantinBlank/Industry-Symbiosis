@@ -54,7 +54,6 @@ namespace DataManagementService.Services
                     command.Parameters.AddWithValue("@fk_production_facility", productionLine.ProductionFacilityId);
                     command.Parameters.AddWithValue("@name", productionLine.Name);
                     command.Connection.Open();
-                    //result = command.ExecuteNonQuery();
                     int productionLineId = Convert.ToInt32(command.ExecuteScalar());
                     productionLine.SetProductionLineId(productionLineId);
                 }
@@ -71,7 +70,7 @@ namespace DataManagementService.Services
             SqlConnectionHelper.Connect((connection) =>
             {
 
-                SqlQueryStringBuilder queryBuilder = new SqlQueryStringBuilder("production_line", "id", productionLineId.ToString());
+                SqlQueryStringBuilder queryBuilder = new SqlQueryStringBuilder("production_line", "id", productionLine.Id.ToString());
 
                 if (!string.IsNullOrEmpty(productionLine.Name))
                 {
@@ -90,7 +89,6 @@ namespace DataManagementService.Services
                     SqlTransaction sqlTran = connection.BeginTransaction();
 
                     // Enlist a command in the current transaction.
-                    //command = connection.CreateCommand();
                     command.Transaction = sqlTran;
 
                     try
@@ -103,7 +101,6 @@ namespace DataManagementService.Services
 
                         result += command.ExecuteNonQuery();
 
-                        // Commit the transaction.
                         sqlTran.Commit();
                     }
                     catch (SqlException error)

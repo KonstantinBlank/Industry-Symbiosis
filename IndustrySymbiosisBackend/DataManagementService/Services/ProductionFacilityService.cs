@@ -49,7 +49,7 @@ namespace DataManagementService.Service
             SqlConnectionHelper.Connect((connection) =>
             {
                 string queryString;
-
+                // address
                 queryString = @"INSERT INTO post_address
 			                            (address_record_1,
                                         address_record_2,
@@ -76,11 +76,12 @@ namespace DataManagementService.Service
                     command.Parameters.AddWithValue("@postcode", productionFacility.Postcode);
                     command.Parameters.AddWithValue("@city", productionFacility.City);
                     command.Connection.Open();
-                    //result = command.ExecuteNonQuery();
+
                     int postAddressId = Convert.ToInt32(command.ExecuteScalar());
                     productionFacility.SetPostAddressId(postAddressId);
                 }
 
+                // production facility
                 queryString = @"INSERT INTO production_facility
                                         (name,
                                         fk_enterprise,
@@ -114,32 +115,32 @@ namespace DataManagementService.Service
 
             SqlConnectionHelper.Connect((connection) =>
             {
-                string queryStringFacilityAttributes = getQueryStringFacilityAttributes(productionFacilityId, productionFacility);
-                string queryStringPostAddressAttributes = getQueryStringPostAddressAttributes(productionFacilityId, productionFacility);
+                string queryFacility = getQueryStringFacility(productionFacility);
+                string queryPostAddress = getQueryPostAddress(productionFacility);
 
-                using (SqlCommand command = new SqlCommand(queryStringFacilityAttributes, connection))
+                using (SqlCommand command = new SqlCommand(queryFacility, connection))
                 {
                     command.Connection.Open();
 
                     // Start a local transaction.
-                    SqlTransaction sqlTran = connection.BeginTransaction();
+                    SqlTransaction sqlTransaction = connection.BeginTransaction();
 
                     // Enlist a command in the current transaction.
-                    //command = connection.CreateCommand();
-                    command.Transaction = sqlTran;
+                    command.Transaction = sqlTransaction;
 
                     try
                     {
-                        result = updateProductionFacilityTable(result, productionFacility, queryStringPostAddressAttributes, command);
-                        result = updatePostAddressTable(result, productionFacility, command);
+                        result += updateProductionFacilityTable(productionFacility, command);
+                        command.CommandText = queryPostAddress;
+                        result += updatePostAddressTable(productionFacility, command);
 
                         // Commit the transaction.
-                        sqlTran.Commit();
+                        sqlTransaction.Commit();
                     }
                     catch (SqlException error)
                     {
                         Console.Write(error.ToString());
-                        sqlTran.Rollback();
+                        sqlTransaction.Rollback();
                         throw error;
                     }
                 }
@@ -148,7 +149,7 @@ namespace DataManagementService.Service
             return result;
         }
 
-        private static int updatePostAddressTable(int result, ProductionFacility productionFacility, SqlCommand command)
+        private int updatePostAddressTable(ProductionFacility productionFacility, SqlCommand command)
         {
             if (!string.IsNullOrWhiteSpace(productionFacility.PostAddressRecord1))
             {
@@ -180,12 +181,12 @@ namespace DataManagementService.Service
                 command.Parameters.AddWithValue("@city", productionFacility.City);
             }
 
-            //command.Connection.Open();
-            result += command.ExecuteNonQuery();
+            int result = command.ExecuteNonQuery();
+
             return result;
         }
 
-        private static int updateProductionFacilityTable(int result, ProductionFacility productionFacility, string queryStringPostAddressAttributes, SqlCommand command)
+        private int updateProductionFacilityTable(ProductionFacility productionFacility, SqlCommand command)
         {
             // Insert parameters
             if (!string.IsNullOrWhiteSpace(productionFacility.FacilityName))
@@ -193,64 +194,62 @@ namespace DataManagementService.Service
                 command.Parameters.AddWithValue("@production_facility_name", productionFacility.FacilityName);
             }
 
-            result += command.ExecuteNonQuery();
+            int result = command.ExecuteNonQuery();
 
-            command.CommandText = queryStringPostAddressAttributes;
             return result;
         }
 
-        private static string getQueryStringPostAddressAttributes(int productionFacilityId, ProductionFacility productionFacility)
+        private string getQueryPostAddress(ProductionFacility productionFacility)
         {
-            SqlQueryStringBuilder sqlQueryStringBuilderPostAddressAttributes = new SqlQueryStringBuilder("production_facility_view", "production_facility_id", productionFacilityId.ToString());
+            SqlQueryStringBuilder queryBuilder = new SqlQueryStringBuilder("production_facility_view", "production_facility_id", productionFacility.Id.ToString());
 
             if (!string.IsNullOrEmpty(productionFacility.PostAddressRecord1))
             {
-                sqlQueryStringBuilderPostAddressAttributes.AddQueryArg("address_record_1");
+                queryBuilder.AddQueryArg("address_record_1");
             }
 
             if (!string.IsNullOrEmpty(productionFacility.PostAddressRecord2))
             {
-                sqlQueryStringBuilderPostAddressAttributes.AddQueryArg("address_record_2");
+                queryBuilder.AddQueryArg("address_record_2");
             }
 
             if (!string.IsNullOrEmpty(productionFacility.City))
             {
-                sqlQueryStringBuilderPostAddressAttributes.AddQueryArg("city");
+                queryBuilder.AddQueryArg("city");
             }
 
             if (!string.IsNullOrEmpty(productionFacility.Street))
             {
-                sqlQueryStringBuilderPostAddressAttributes.AddQueryArg("street");
+                queryBuilder.AddQueryArg("street");
             }
 
             if (!string.IsNullOrEmpty(productionFacility.Postcode))
             {
-                sqlQueryStringBuilderPostAddressAttributes.AddQueryArg("postcode");
+                queryBuilder.AddQueryArg("postcode");
             }
 
             if (!string.IsNullOrEmpty(productionFacility.HouseNumber))
             {
-                sqlQueryStringBuilderPostAddressAttributes.AddQueryArg("house_number");
+                queryBuilder.AddQueryArg("house_number");
             }
 
-
-            string queryStringPostAddressAttributes = sqlQueryStringBuilderPostAddressAttributes.GetSqlQueryString();
-            Console.WriteLine(queryStringPostAddressAttributes);
-            return queryStringPostAddressAttributes;
+            string query = queryBuilder.GetSqlQueryString();
+            Console.WriteLine(query);
+            return query;
         }
 
-        private static string getQueryStringFacilityAttributes(int productionFacilityId, ProductionFacility productionFacility)
+        private string getQueryStringFacility(ProductionFacility productionFacility)
         {
-            SqlQueryStringBuilder sqlQueryStringBuilderFacilityAttributes = new SqlQueryStringBuilder("production_facility_view", "production_facility_id", productionFacilityId.ToString());
+            SqlQueryStringBuilder queryBuilder = new SqlQueryStringBuilder("production_facility_view", "production_facility_id", productionFacility.Id.ToString());
 
             if (!string.IsNullOrEmpty(productionFacility.FacilityName))
             {
-                sqlQueryStringBuilderFacilityAttributes.AddQueryArg("production_facility_name");
+                queryBuilder.AddQueryArg("production_facility_name");
             }
 
-            string queryStringFacilityAttributes = sqlQueryStringBuilderFacilityAttributes.GetSqlQueryString();
-            Console.WriteLine(queryStringFacilityAttributes);
-            return queryStringFacilityAttributes;
+            string query = queryBuilder.GetSqlQueryString();
+            Console.WriteLine(query);
+            return query;
         }
     }
 }

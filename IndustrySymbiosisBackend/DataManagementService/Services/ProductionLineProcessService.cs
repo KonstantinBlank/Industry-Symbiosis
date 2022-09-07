@@ -66,13 +66,13 @@ namespace DataManagementService.Services
         public int Update(int productionLineProcessId, string name)
         {
             int result = 0;
-            ProductionLine productionLine = new ProductionLine(productionLineProcessId, name);
+            ProductionLineProcess productionLineProcess = new ProductionLineProcess(productionLineProcessId, name);
 
             SqlConnectionHelper.Connect((connection) =>
             {
-                SqlQueryStringBuilder queryBuilder = new SqlQueryStringBuilder("production_line_process", "id", productionLineProcessId.ToString());
+                SqlQueryStringBuilder queryBuilder = new SqlQueryStringBuilder("production_line_process", "id", productionLineProcess.Id.ToString());
 
-                if (!string.IsNullOrEmpty(productionLine.Name))
+                if (!string.IsNullOrEmpty(productionLineProcess.Name))
                 {
                     queryBuilder.AddQueryArg("name");
                 }
@@ -94,9 +94,9 @@ namespace DataManagementService.Services
                     try
                     {
                         // Insert parameters
-                        if (!string.IsNullOrWhiteSpace(productionLine.Name))
+                        if (!string.IsNullOrWhiteSpace(productionLineProcess.Name))
                         {
-                            command.Parameters.AddWithValue("@name", productionLine.Name);
+                            command.Parameters.AddWithValue("@name", productionLineProcess.Name);
                         }
 
                         result += command.ExecuteNonQuery();
