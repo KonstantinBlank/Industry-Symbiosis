@@ -15,7 +15,7 @@ namespace DataManagementService.Controllers
             _streamService = new StreamService();
         }
 
-        [HttpGet("streams/{processLineId}")]
+        [HttpGet("/processline/{processLineId}")]
         public ActionResult Get(int processLineId)
         {
             string streamsJSON = _streamService.Get(processLineId);
@@ -25,7 +25,7 @@ namespace DataManagementService.Controllers
             return Ok(streamsJSON);
         }
 
-        [HttpPost("streams/create/")]
+        [HttpPost("/create/")]
         public ActionResult Create(int productionLineProcessId, bool isInput, string name, int materialId, int energyId, int amount, int interval)
         {
             _streamService.Create(productionLineProcessId, isInput, name, materialId, energyId, amount, interval);
@@ -35,7 +35,7 @@ namespace DataManagementService.Controllers
             return Ok();
         }
 
-        [HttpPost("streams/update/")]
+        [HttpPost("/update/")]
         public ActionResult Update(int id, int productionLineProcessId, bool isInput, int materialId, int energyId, int amount, int interval)
         {
             _streamService.Update(id, productionLineProcessId, isInput, materialId, energyId, amount, interval);

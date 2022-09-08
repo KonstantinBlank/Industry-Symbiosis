@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace DataManagementService.Controllers
 {
     [ApiController]
-    [Route("api/")]
+    [Route("api/production_lines")]
     public class ProductionLineController : ControllerBase
     {
         private ProductionLineService _productionLineService;
@@ -21,7 +21,7 @@ namespace DataManagementService.Controllers
         /// <returns>
         /// json with all production lines from the specified production facility
         /// </returns>
-        [HttpGet("production_lines/{productionFacilityId}")]
+        [HttpGet("productionfacility/{productionFacilityId}")]
         public ActionResult GetProductionLines(int productionFacilityId)
         {
             string productionLinesJSON = _productionLineService.Get(productionFacilityId);
@@ -35,7 +35,7 @@ namespace DataManagementService.Controllers
         /// create production line
         /// </summary>
         /// <returns></returns>
-        [HttpPost("production_lines/create/")]
+        [HttpPost("/create/")]
         public IActionResult CreateProductionLine(int productionFacilityId, string name)
         {
             string CreatedProductionLinesAsJSON = _productionLineService.Create(productionFacilityId, name);
@@ -49,7 +49,7 @@ namespace DataManagementService.Controllers
         /// update a production line
         /// </summary>
         /// <returns></returns>
-        [HttpPost("production_lines/update/")]
+        [HttpPost("/update/")]
         public IActionResult UpdateProductionLine(int productionLineId, string name)
         {
             int CreatedProductionLines = _productionLineService.Update(productionLineId, name);
