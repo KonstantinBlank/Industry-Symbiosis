@@ -6,7 +6,7 @@ using System.Data.SqlClient;
 
 namespace MatchingService.Services
 {
-    public class StreamMatchingService : IMatchingService
+    public class StreamMatchingService : IStreamMatchingService
     {
 
         public StreamMatchingService()
@@ -146,7 +146,7 @@ namespace MatchingService.Services
             return streams;
         }
 
-        public string GetMatchingeOutputStreams(int inputstreamId)
+        public string GetMatchingOutputStreams(int inputstreamId)
         {
             string streams = string.Empty;
 
