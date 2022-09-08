@@ -4,14 +4,12 @@ using Newtonsoft.Json;
 using System;
 using MatchingService.Services;
 
-namespace EnterpriseManagementService.Controllers
+namespace EnterpriseManagement.Controllers
 {
-    [Route("api/matches")] // api/matching/
+    [Route("api/matches")]
     [ApiController]
     public class MatchingController : ControllerBase
     {
-
-
         private StreamMatchingService _streamMatchingService { get; }
 
         public MatchingController(StreamMatchingService matchingService)
@@ -21,9 +19,9 @@ namespace EnterpriseManagementService.Controllers
 
 
         [HttpGet("/inputstreams/enterprise/{enterpriseID}")] // api/matching/inputstreams/enterprise/{enterpriseID}
-        public ActionResult GetAvailableInputStreams(string enterpriseID)
+        public ActionResult GetAvailableInputStreams(int enterpriseId)
         {
-            string streamsJSON = _streamMatchingService.GetAvailableInputStreams(enterpriseID);
+            string streamsJSON = _streamMatchingService.GetAvailableInputStreams(enterpriseId);
 
             Console.WriteLine("API abfrage erfolgreich");
 
@@ -32,9 +30,9 @@ namespace EnterpriseManagementService.Controllers
         }
 
         [HttpGet("/outputstreams/enterprise/{enterpriseID}")] // api/matching/outputstreams/enterprise/{enterpriseID}
-        public ActionResult GetAvailableOutputStreams(string enterpriseID)
+        public ActionResult GetAvailableOutputStreams(int enterpriseId)
         {
-            string streamsJSON = _streamMatchingService.GetAvailableOutputStreams(enterpriseID);
+            string streamsJSON = _streamMatchingService.GetAvailableOutputStreams(enterpriseId);
 
             Console.WriteLine("API abfrage erfolgreich");
 
@@ -112,8 +110,5 @@ namespace EnterpriseManagementService.Controllers
 
             return Ok();
         }
-
-
-
     }
 }

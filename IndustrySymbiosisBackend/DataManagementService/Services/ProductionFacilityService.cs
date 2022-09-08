@@ -113,7 +113,7 @@ namespace DataManagementService.Services
 
             SqlConnectionHelper.Connect((connection) =>
             {
-                string queryFacility = getQueryStringFacility(productionFacility);
+                string queryFacility = getQueryFacility(productionFacility);
                 string queryPostAddress = getQueryPostAddress(productionFacility);
                 string query = !string.IsNullOrWhiteSpace(queryFacility) ? queryFacility : queryPostAddress;
 
@@ -241,7 +241,7 @@ namespace DataManagementService.Services
             return query;
         }
 
-        private string getQueryStringFacility(ProductionFacility productionFacility)
+        private string getQueryFacility(ProductionFacility productionFacility)
         {
             SqlQueryStringBuilder queryBuilder = new SqlQueryStringBuilder("production_facility_view", "production_facility_id", productionFacility.Id.ToString());
 

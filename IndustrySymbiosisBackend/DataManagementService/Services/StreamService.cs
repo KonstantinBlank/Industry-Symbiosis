@@ -71,7 +71,7 @@ namespace DataManagementService.Services
             return JsonConvert.SerializeObject(stream);
         }
 
-        private static string getCreateQuery(Stream stream)
+        private string getCreateQuery(Stream stream)
         {
             string query;
             string column = (stream.MaterialId != null) ? "fk_material" : "fk_energy_source"; 
@@ -132,7 +132,7 @@ namespace DataManagementService.Services
             return result;
         }
 
-        private static void insertCommandParameters(Stream stream, SqlCommand command)
+        private void insertCommandParameters(Stream stream, SqlCommand command)
         {
             // Insert parameters
             if (stream.ProductionLineProcessId != null)
@@ -166,7 +166,7 @@ namespace DataManagementService.Services
             }
         }
 
-        private static string getUpdateQuery(Stream stream)
+        private string getUpdateQuery(Stream stream)
         {
             SqlQueryStringBuilder queryBuilder = new SqlQueryStringBuilder("stream", "id", stream.Id.ToString());
 

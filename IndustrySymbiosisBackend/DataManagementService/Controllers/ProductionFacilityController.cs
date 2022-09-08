@@ -1,14 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Threading.Tasks;
-using DataManagementService.Data;
 using DataManagementService.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 
 namespace DataManagementService.Controllers
 {
@@ -16,11 +8,11 @@ namespace DataManagementService.Controllers
     [Route("api/")]
     public class ProductionFacilityController : ControllerBase
     {
-        private ProductionFacilityService _productionFacilityService { get; }
+        private ProductionFacilityService _productionFacilityService;
 
-        public ProductionFacilityController(ProductionFacilityService productionFacilityService)
+        public ProductionFacilityController()
         {
-            _productionFacilityService = productionFacilityService;
+            _productionFacilityService = new ProductionFacilityService();
         }
 
         /// <summary>
@@ -30,7 +22,7 @@ namespace DataManagementService.Controllers
         /// json with all production facilities from the specified enterprise
         /// </returns>
         [HttpGet("production_facilities/get/{enterpriseId}")]
-        public ActionResult GetProductionFacilities(int enterpriseId)
+        public ActionResult Get(int enterpriseId)
         {
             string productionLinesOfEnterpriseasJSON = _productionFacilityService.Get(enterpriseId);
 
@@ -44,7 +36,7 @@ namespace DataManagementService.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost("production_facilities/create/")]
-        public IActionResult CreateProductionFacility(int enterpriseId, string facilityName, string postAddressRecord1, string postAddressRecord2, string street, string houseNumber, string postcode, string city)
+        public IActionResult Create(int enterpriseId, string facilityName, string postAddressRecord1, string postAddressRecord2, string street, string houseNumber, string postcode, string city)
         {
             string CreatedProductionFacilityasJSON = _productionFacilityService.Create(enterpriseId, facilityName, postAddressRecord1, postAddressRecord2, street, houseNumber, postcode, city);
 
@@ -53,10 +45,8 @@ namespace DataManagementService.Controllers
             return Ok(CreatedProductionFacilityasJSON);
         }
 
-       
-
         [HttpPost("production_facilities/update/")]
-        public IActionResult UpdateProductionFacility(int productionFacilityId, int? enterpriseId = null, int? postAddressId = null, string? facilityName = null, string? postAddressRecord1 = null, string? postAddressRecord2 = null, string? street = null, string? houseNumber = null, string? postcode = null, string? city = null)
+        public IActionResult Update(int productionFacilityId, int? enterpriseId = null, int? postAddressId = null, string? facilityName = null, string? postAddressRecord1 = null, string? postAddressRecord2 = null, string? street = null, string? houseNumber = null, string? postcode = null, string? city = null)
         {
             int result = _productionFacilityService.Update(enterpriseId, productionFacilityId, postAddressId, facilityName, postAddressRecord1, postAddressRecord2, street, houseNumber, postcode, city);
 
@@ -64,8 +54,6 @@ namespace DataManagementService.Controllers
 
             return Ok(result);
         }
-
-
     }
 }
 
