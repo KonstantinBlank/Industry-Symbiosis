@@ -106,7 +106,7 @@ namespace DataManagementService.Services
             return JsonConvert.SerializeObject(productionFacility);
         }
 
-        public int Update(int enterpriseId, int productionFacilityId, int postAddressId, string? facilityName, string? postAddressRecord1, string? postAddressRecord2, string? street, string? houseNumber, string? postcode, string? city)
+        public int Update(int? enterpriseId, int productionFacilityId, int? postAddressId, string? facilityName, string? postAddressRecord1, string? postAddressRecord2, string? street, string? houseNumber, string? postcode, string? city)
         {
             int result = 0;
             ProductionFacility productionFacility = new ProductionFacility(productionFacilityId, postAddressId, enterpriseId, facilityName, postAddressRecord1, postAddressRecord2, street, houseNumber, postcode, city);
@@ -115,8 +115,9 @@ namespace DataManagementService.Services
             {
                 string queryFacility = getQueryStringFacility(productionFacility);
                 string queryPostAddress = getQueryPostAddress(productionFacility);
+                string query = !string.IsNullOrWhiteSpace(queryFacility) ? queryFacility : queryPostAddress;
 
-                using (SqlCommand command = new SqlCommand(queryFacility, connection))
+                using (SqlCommand command = new SqlCommand(query, connection))
                 {
                     command.Connection.Open();
 
@@ -128,9 +129,15 @@ namespace DataManagementService.Services
 
                     try
                     {
-                        result += updateProductionFacilityTable(productionFacility, command);
-                        command.CommandText = queryPostAddress;
-                        result += updatePostAddressTable(productionFacility, command);
+                        if (!string.IsNullOrWhiteSpace(queryFacility))
+                        {
+                            result += updateProductionFacilityTable(productionFacility, command);
+                        }
+                        if (!string.IsNullOrWhiteSpace(queryPostAddress))
+                        {
+                            command.CommandText = queryPostAddress;
+                            result += updatePostAddressTable(productionFacility, command);
+                        }
 
                         // Commit the transaction.
                         sqlTransaction.Commit();
@@ -188,7 +195,7 @@ namespace DataManagementService.Services
             // Insert parameters
             if (!string.IsNullOrWhiteSpace(productionFacility.FacilityName))
             {
-                command.Parameters.AddWithValue("@production_facility_name", productionFacility.FacilityName);
+                command.Parameters.AddWithValue("@name", productionFacility.FacilityName);
             }
 
             int result = command.ExecuteNonQuery();
@@ -229,7 +236,6 @@ namespace DataManagementService.Services
             {
                 queryBuilder.AddQueryArg("house_number");
             }
-
             string query = queryBuilder.GetSqlQueryString();
             Console.WriteLine(query);
             return query;
@@ -241,7 +247,7 @@ namespace DataManagementService.Services
 
             if (!string.IsNullOrEmpty(productionFacility.FacilityName))
             {
-                queryBuilder.AddQueryArg("production_facility_name");
+                queryBuilder.AddQueryArg("name");
             }
 
             string query = queryBuilder.GetSqlQueryString();

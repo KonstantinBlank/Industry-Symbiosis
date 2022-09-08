@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace DataManagementService.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/stream")]
     public class StreamController : ControllerBase
     {
         private StreamService _streamService;
@@ -15,7 +15,7 @@ namespace DataManagementService.Controllers
             _streamService = new StreamService();
         }
 
-        [HttpGet("/processline/{processLineId}")]
+        [HttpGet("get/{processLineId}")]
         public ActionResult Get(int processLineId)
         {
             string streamsJSON = _streamService.Get(processLineId);
@@ -25,27 +25,28 @@ namespace DataManagementService.Controllers
             return Ok(streamsJSON);
         }
 
-        [HttpPost("/create/")]
-        public ActionResult Create(int productionLineProcessId, bool isInput, string name, int materialId, int energyId, int amount, int interval)
+        [HttpPost("create/")]
+        public ActionResult Create(int productionLineProcessId, bool isInput, int amount, int interval, int? materialId = null, int? energyId = null)
         {
-            _streamService.Create(productionLineProcessId, isInput, name, materialId, energyId, amount, interval);
-
-            Console.WriteLine("API abfrage erfolgreich");
+            if ((materialId == null && energyId == null) || (materialId != null && energyId != null))
+            {
+                Console.WriteLine("You need to pass either a materialId or a energyId.");
+            }
+            else
+            {
+                _streamService.Create(productionLineProcessId, isInput, materialId, energyId, amount, interval);
+                Console.WriteLine("API abfrage erfolgreich");
+            }
 
             return Ok();
         }
 
-        [HttpPost("/update/")]
-        public ActionResult Update(int id, int productionLineProcessId, bool isInput, int materialId, int energyId, int amount, int interval)
+        [HttpPost("update/")]
+        public ActionResult Update(int id, int? productionLineProcessId = null, bool? isInput = null, int? materialId = null, int? energyId = null, int? amount = null, int? interval = null)
         {
             _streamService.Update(id, productionLineProcessId, isInput, materialId, energyId, amount, interval);
-
             Console.WriteLine("API abfrage erfolgreich");
-
             return Ok();
         }
-
-
     }
 }
-

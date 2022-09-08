@@ -43,7 +43,7 @@ namespace DataManagementService.Controllers
         /// create production facility
         /// </summary>
         /// <returns></returns>
-        [HttpPost("production_facilities/create/")] // zu testzecken entfernt: {enterpriseID}/
+        [HttpPost("production_facilities/create/")]
         public IActionResult CreateProductionFacility(int enterpriseId, string facilityName, string postAddressRecord1, string postAddressRecord2, string street, string houseNumber, string postcode, string city)
         {
             string CreatedProductionFacilityasJSON = _productionFacilityService.Create(enterpriseId, facilityName, postAddressRecord1, postAddressRecord2, street, houseNumber, postcode, city);
@@ -56,7 +56,7 @@ namespace DataManagementService.Controllers
        
 
         [HttpPost("production_facilities/update/")]
-        public IActionResult UpdateProductionFacility(int enterpriseId, int productionFacilityId, int postAddressId, string? facilityName = null, string? postAddressRecord1 = null, string? postAddressRecord2 = null, string? street = null, string? houseNumber = null, string? postcode = null, string? city = null)
+        public IActionResult UpdateProductionFacility(int productionFacilityId, int? enterpriseId = null, int? postAddressId = null, string? facilityName = null, string? postAddressRecord1 = null, string? postAddressRecord2 = null, string? street = null, string? houseNumber = null, string? postcode = null, string? city = null)
         {
             int result = _productionFacilityService.Update(enterpriseId, productionFacilityId, postAddressId, facilityName, postAddressRecord1, postAddressRecord2, street, houseNumber, postcode, city);
 

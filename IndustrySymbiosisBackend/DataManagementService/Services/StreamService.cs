@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 
 namespace DataManagementService.Services
 {
-    public class StreamService: IStreamService
+    public class StreamService : IStreamService
     {
         public StreamService()
         {
@@ -39,35 +39,27 @@ namespace DataManagementService.Services
             return streams;
         }
 
-        public string Create(int productionLineProcessId, bool isInput, int materialId, int energyId, int amount, int interval)
+        public string Create(int productionLineProcessId, bool isInput, int? materialId, int? energyId, int amount, int interval)
         {
             Stream stream = new Stream(productionLineProcessId, isInput, materialId, energyId, amount, interval);
 
             SqlConnectionHelper.Connect((connection) =>
             {
-                string queryString = @$"INSERT INTO stream
-                                        (fk_production_line_process,
-                                        is_input,
-                                        fk_material,
-                                        fk_energy_source,
-                                        amount,
-                                        interval)
-                                       VALUES
-                                        (@fk_production_line_process,
-                                        @is_input,
-                                        @fk_material,
-                                        @fk_energy_source,
-                                        @amount,
-                                        @interval)
-                                       SELECT SCOPE_IDENTITY()";
+                string queryString = getCreateQuery(stream);
 
                 using (SqlCommand command = new SqlCommand(queryString, connection))
                 {
                     // Insert parameters
                     command.Parameters.AddWithValue("@fk_production_line_process", stream.ProductionLineProcessId);
                     command.Parameters.AddWithValue("@is_input", stream.IsInput);
-                    command.Parameters.AddWithValue("@fk_material", stream.MaterialId);
-                    command.Parameters.AddWithValue("@fk_energy_source", stream.EnergyId);
+                    if (stream.MaterialId != null)
+                    {
+                        command.Parameters.AddWithValue("@fk_material", stream.MaterialId);
+                    }
+                    if (stream.EnergyId != null)
+                    {
+                        command.Parameters.AddWithValue("@fk_energy_source", stream.EnergyId);
+                    }
                     command.Parameters.AddWithValue("@amount", stream.Amount);
                     command.Parameters.AddWithValue("@interval", stream.Interval);
                     command.Connection.Open();
@@ -79,6 +71,28 @@ namespace DataManagementService.Services
             return JsonConvert.SerializeObject(stream);
         }
 
+        private static string getCreateQuery(Stream stream)
+        {
+            string query;
+            string column = (stream.MaterialId != null) ? "fk_material" : "fk_energy_source"; 
+            query = @$"INSERT INTO stream
+                            (fk_production_line_process,
+                            is_input,
+                            {column},
+                            amount,
+                            interval)
+                           VALUES
+                            (@fk_production_line_process,
+                            @is_input,
+                            @{column},
+                            @amount,
+                            @interval)
+                           SELECT SCOPE_IDENTITY()";
+            
+            return query;
+        }
+
+
         public int Update(int id, int? productionLineProcessId, bool? isInput, int? materialId, int? energyId, int? amount, int? interval)
         {
             int result = 0;
@@ -86,7 +100,7 @@ namespace DataManagementService.Services
 
             SqlConnectionHelper.Connect((connection) =>
             {
-                string query = getQuery(stream);
+                string query = getUpdateQuery(stream);
 
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {
@@ -152,7 +166,7 @@ namespace DataManagementService.Services
             }
         }
 
-        private static string getQuery(Stream stream)
+        private static string getUpdateQuery(Stream stream)
         {
             SqlQueryStringBuilder queryBuilder = new SqlQueryStringBuilder("stream", "id", stream.Id.ToString());
 

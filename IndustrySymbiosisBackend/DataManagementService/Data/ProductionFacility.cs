@@ -8,8 +8,8 @@ namespace DataManagementService.Data
     {
         [JsonPropertyName("facilityName")]
         public int Id { get; private set; }
-        public int PostAddressId { get; private set; }
-        public int EnterpriseId { get; private set; }
+        public int? PostAddressId { get; private set; }
+        public int? EnterpriseId { get; private set; }
         public string? FacilityName { get; private set; }
         public string? PostAddressRecord1 { get; private set; }
         public string? PostAddressRecord2 { get; private set; }
@@ -18,7 +18,7 @@ namespace DataManagementService.Data
         public string? Street { get; private set; }
         public string? HouseNumber { get; private set; }
 
-        public ProductionFacility(int productionFacilityId, int postAddressId, int enterpriseId, string? facilityName, string? postAddressRecord1, string? postAddressRecord2,  string? street, string? houseNumber, string? postcode, string? city)
+        public ProductionFacility(int productionFacilityId, int? postAddressId, int? enterpriseId, string? facilityName, string? postAddressRecord1, string? postAddressRecord2,  string? street, string? houseNumber, string? postcode, string? city)
         {
             Id = productionFacilityId;
             PostAddressId = postAddressId;

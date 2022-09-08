@@ -41,6 +41,10 @@ namespace DataManagementService.Services
 
         public string GetSqlQueryString()
         {
+            if(_sqlArgList.Count == 0)
+            {
+                return "";
+            }
             querySetBuilder();
 
             _queryString = new StringBuilder().Append(_queryStringSqlUpdatePart).Append(_queryStringSqlSetPart).Append(_queryStringSqlWherePart).ToString();
@@ -63,6 +67,7 @@ namespace DataManagementService.Services
                 stringbuilder.Append(sqlArg);
                 stringbuilder.Append(" = @");
                 stringbuilder.Append(sqlArg);
+                firstlab = false;
             }
 
             _queryStringSqlSetPart = stringbuilder.ToString();
