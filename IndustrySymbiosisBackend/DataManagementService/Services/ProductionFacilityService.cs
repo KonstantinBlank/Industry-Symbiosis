@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Data;
 using System.Data.SqlClient;
-
 using Newtonsoft.Json;
-
 using DataManagementService.Data;
 using DataManagementService.Interfaces;
 using DataManagementService.Services;
 
-namespace DataManagementService.Service
+namespace DataManagementService.Services
 {
     public class ProductionFacilityService : IProductionFacilityService
     {
@@ -145,7 +143,6 @@ namespace DataManagementService.Service
                     }
                 }
             });
-
             return result;
         }
 
