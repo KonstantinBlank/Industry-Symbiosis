@@ -1,6 +1,8 @@
 ﻿using DataManagementService.Services;
 using MatchingService.Interfaces;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 
@@ -13,6 +15,8 @@ namespace MatchingService.Services
         {
         }
 
+
+        /*
         public string GetAvailableInputStreams(int enterpriseId)
         {
             string streams = string.Empty;
@@ -221,18 +225,17 @@ namespace MatchingService.Services
             return streams;
         }
 
-        public int create(int enterpriseId, bool selectedIsInput, string selectedStreamId, string requestedStreamId, float amount, float priceProposal, string comment)
+        */
+
+        public int propose(int enterpriseId, bool selectedIsInput, int selectedStreamId, int requestedStreamId, float amount, float priceProposal, string comment)
         {
             string streams = string.Empty;
-            int result = 0;
+            int matchID = -1;
 
+            //int result = -1;
 
-
-            SqlConnectionHelper.Connect((connection) =>
-            {
-                string queryString;
-
-                queryString = @$"INSERT INTO stream_match
+            string queryString;
+            queryString = @$"INSERT INTO stream_match
                                      (fk_input_stream
                                      ,fk_output_stream
                                      ,amount
@@ -253,31 +256,75 @@ namespace MatchingService.Services
                                SELECT SCOPE_IDENTITY();";
 
 
-                using (SqlCommand command = new SqlCommand(queryString, connection))
-                {
-                    // Insert parameters
-                    if (selectedIsInput) // input = selectedStreamId
-                    {
-                        command.Parameters.AddWithValue("@fk_input_stream", selectedStreamId);
-                        command.Parameters.AddWithValue("@fk_output_stream", requestedStreamId);
-                    }
-                    else // input = requestedStreamId
-                    {
-                        command.Parameters.AddWithValue("@fk_input_stream", requestedStreamId);
-                        command.Parameters.AddWithValue("@fk_output_stream", selectedStreamId);
-                    }
+            IDictionary<string, object> parameterPairs = new Dictionary<string, object>();
 
-                    command.Parameters.AddWithValue("@amount", amount);
-                    command.Parameters.AddWithValue("@fk_proposing_party", enterpriseId);
-                    command.Parameters.AddWithValue("@price_proposal", priceProposal);
-                    command.Parameters.AddWithValue("@comment", comment);
-                    command.Parameters.AddWithValue("@fk_status", 1); // 0 == 1 == 2 == 
-                    command.Connection.Open();
+            // Insert parameters
+            if (selectedIsInput) // input = selectedStreamId
+            {
+                parameterPairs.Add("@fk_input_stream", selectedStreamId.ToString());
+                parameterPairs.Add("@fk_output_stream", requestedStreamId.ToString());
+            }
+            else // input = requestedStreamId
+            {
+                parameterPairs.Add("@fk_input_stream", requestedStreamId.ToString());
+                parameterPairs.Add("@fk_output_stream", selectedStreamId.ToString());
+            }
 
-                    int result = command.ExecuteNonQuery();
-                }
-            });
+            parameterPairs.Add("@amount", amount);
+            parameterPairs.Add("@fk_proposing_party", enterpriseId);
+            parameterPairs.Add("@price_proposal", priceProposal);
+            parameterPairs.Add("@comment", comment);
+            parameterPairs.Add("@fk_status", 1); // 0 == 1 == 2 == 
+
+
+            matchID = SqlConnectionHelper.CreateEntry(queryString, parameterPairs);
+
+            Console.WriteLine(queryString);
+            Console.WriteLine("production line process entry was successfully created!");
+            NotifyUserService notifyUserService = new NotifyUserService("team@industriesymbiose.de", "weis_ecom@mailbox.org", "Neue Match-Anfrage Details", "Sie haben ein neues Match");
+           
+            return matchID;
+        }
+
+        public int cancle(int matchId)
+        {
+            IDictionary<string, object?> parameterPairs = new Dictionary<string, object?>();
+            parameterPairs.Add("fk_status", 5); // 5 = canclled
+
+            int result = SqlConnectionHelper.UpdateEntry("stream", matchId.ToString(), parameterPairs);
+
             return result;
         }
+
+        public int recall(int matchId)
+        {
+            IDictionary<string, object?> parameterPairs = new Dictionary<string, object?>();
+            parameterPairs.Add("fk_status", 6); // 5 = recalled
+
+            int result = SqlConnectionHelper.UpdateEntry("stream", matchId.ToString(), parameterPairs);
+
+            return result;
+        }
+
+        public int reject(int matchId)
+        {
+            IDictionary<string, object?> parameterPairs = new Dictionary<string, object?>();
+            parameterPairs.Add("fk_status", 6); // 6 = recall
+
+            int result = SqlConnectionHelper.UpdateEntry("stream", matchId.ToString(), parameterPairs);
+
+            return result;
+        }
+
+        public int accept(int matchId)
+        {
+            IDictionary<string, object?> parameterPairs = new Dictionary<string, object?>();
+            parameterPairs.Add("fk_status", 1); // 1 = active
+
+            int result = SqlConnectionHelper.UpdateEntry("stream", matchId.ToString(), parameterPairs);
+
+            return result;
+        }
+    
     }
 }
