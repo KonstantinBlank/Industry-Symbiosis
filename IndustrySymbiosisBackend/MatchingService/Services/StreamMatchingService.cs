@@ -282,7 +282,7 @@ namespace MatchingService.Services
             Console.WriteLine(queryString);
             Console.WriteLine("production line process entry was successfully created!");
             NotifyUserService notifyUserService = new NotifyUserService("team@industriesymbiose.de", "weis_ecom@mailbox.org", "Neue Match-Anfrage Details", "Sie haben ein neues Match");
-           
+            notifyUserService.Send();
             return matchID;
         }
 
