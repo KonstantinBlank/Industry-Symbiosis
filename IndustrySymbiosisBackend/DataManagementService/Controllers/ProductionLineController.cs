@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace DataManagementService.Controllers
 {
     [ApiController]
-    [Route("api/production_lines")]
+    [Route("api/production_lines/")]
     public class ProductionLineController : ControllerBase
     {
         private ProductionLineService _productionLineService;
@@ -21,14 +21,14 @@ namespace DataManagementService.Controllers
         /// <returns>
         /// json with all production lines from the specified production facility
         /// </returns>
-        [HttpGet("productionfacility/{productionFacilityId}")]
-        public ActionResult GetProductionLines(int productionFacilityId)
+        [HttpGet("get/{productionFacilityId}")]
+        public ActionResult Get(int productionFacilityId)
         {
-            string productionLinesJSON = _productionLineService.Get(productionFacilityId);
+            string productionLines = _productionLineService.Get(productionFacilityId);
                 
             Console.WriteLine("API abfrage erfolgreich");
 
-            return Ok(productionLinesJSON);
+            return Ok(productionLines);
         }
 
         /// <summary>
@@ -36,13 +36,13 @@ namespace DataManagementService.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost("/create/")]
-        public IActionResult CreateProductionLine(int productionFacilityId, string name)
+        public IActionResult Create(int productionFacilityId, string name)
         {
-            string CreatedProductionLinesAsJSON = _productionLineService.Create(productionFacilityId, name);
+            string productionLine = _productionLineService.Create(productionFacilityId, name);
 
             Console.WriteLine("API Abfrage durchgeführt");
 
-            return Ok(CreatedProductionLinesAsJSON);
+            return Ok(productionLine);
         }
 
         /// <summary>
@@ -50,13 +50,13 @@ namespace DataManagementService.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost("/update/")]
-        public IActionResult UpdateProductionLine(int productionLineId, string name)
+        public IActionResult Update(int id, int? productionLineId, string? name)
         {
-            int CreatedProductionLines = _productionLineService.Update(productionLineId, name);
+            int updatedRows = _productionLineService.Update(id, productionLineId, name);
 
             Console.WriteLine("API Abfrage durchgeführt");
 
-            return Ok(CreatedProductionLines);
+            return Ok(updatedRows);
         }
 
     }

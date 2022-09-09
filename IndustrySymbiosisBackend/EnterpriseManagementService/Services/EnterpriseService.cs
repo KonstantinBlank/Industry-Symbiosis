@@ -95,21 +95,21 @@ namespace EnterpriseManagement.Services
             //update enterprise entry
             Enterprise enterprise = new Enterprise(enterpriseId, name, new Address(addressId, addressRecord1, addressRecord2, street, houseNumber, postcode, city));
 
-            IDictionary<string, string?> parameterPairsEnterprise = new Dictionary<string, string?>();
-            parameterPairsEnterprise.Add(new KeyValuePair<string, string?>("name", enterprise.Name));
+            IDictionary<string, object?> parameterPairsEnterprise = new Dictionary<string, object?>();
+            parameterPairsEnterprise.Add(new KeyValuePair<string, object?>("name", enterprise.Name));
 
             updatedRows += SqlConnectionHelper.UpdateEntry("enterprise", enterprise.Id.ToString(), parameterPairsEnterprise);
 
             //update address entry
             Address address = enterprise.Address;
 
-            IDictionary<string, string?> parameterPairsAddress = new Dictionary<string, string?>();
-            parameterPairsAddress.Add(new KeyValuePair<string, string?>("address_record_1", address.PostAddressRecord1));
-            parameterPairsAddress.Add(new KeyValuePair<string, string?>("address_record_2", address.PostAddressRecord2));
-            parameterPairsAddress.Add(new KeyValuePair<string, string?>("street", address.Street));
-            parameterPairsAddress.Add(new KeyValuePair<string, string?>("house_number", address.HouseNumber));
-            parameterPairsAddress.Add(new KeyValuePair<string, string?>("postcode", address.Postcode));
-            parameterPairsAddress.Add(new KeyValuePair<string, string?>("city", address.City));
+            IDictionary<string, object?> parameterPairsAddress = new Dictionary<string, object?>();
+            parameterPairsAddress.Add(new KeyValuePair<string, object?>("address_record_1", address.PostAddressRecord1));
+            parameterPairsAddress.Add(new KeyValuePair<string, object?>("address_record_2", address.PostAddressRecord2));
+            parameterPairsAddress.Add(new KeyValuePair<string, object?>("street", address.Street));
+            parameterPairsAddress.Add(new KeyValuePair<string, object?>("house_number", address.HouseNumber));
+            parameterPairsAddress.Add(new KeyValuePair<string, object?>("postcode", address.Postcode));
+            parameterPairsAddress.Add(new KeyValuePair<string, object?>("city", address.City));
 
             updatedRows += SqlConnectionHelper.UpdateEntry("post_address", enterprise.Address.Id.ToString(), parameterPairsAddress);
 

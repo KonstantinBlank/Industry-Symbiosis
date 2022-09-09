@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Text;
 
 namespace DataManagementService.Services
@@ -10,16 +9,16 @@ namespace DataManagementService.Services
 
         private string _queryString = string.Empty;
 
-        private string _UpdatePart = string.Empty;
-        private string _SetPart = string.Empty;
-        private string _WherePart = string.Empty;
+        private string _updatePart = string.Empty;
+        private string _setPart = string.Empty;
+        private string _wherePart = string.Empty;
 
 
         public SqlQueryStringBuilder(string tableName, string idName, string id)
         {
 
-            _UpdatePart = $"UPDATE {tableName}";
-            _WherePart = $" WHERE {idName} = {id}";
+            _updatePart = $"UPDATE {tableName}";
+            _wherePart = $" WHERE {idName} = {id}";
 
             //   UPDATE _table_name_
             //   SET _column1_ = _value1_, _column2_ = _value2_, ...  
@@ -43,7 +42,7 @@ namespace DataManagementService.Services
             }
             querySetBuilder();
 
-            _queryString = new StringBuilder().Append(_UpdatePart).Append(_SetPart).Append(_WherePart).ToString();
+            _queryString = new StringBuilder().Append(_updatePart).Append(_setPart).Append(_wherePart).ToString();
 
             return _queryString;
         }
@@ -66,7 +65,7 @@ namespace DataManagementService.Services
                 firstlab = false;
             }
 
-            _SetPart = stringbuilder.ToString();
+            _setPart = stringbuilder.ToString();
         }
     }
 }

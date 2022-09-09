@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Data;
-using System.Data.SqlClient;
 using Newtonsoft.Json;
 using DataManagementService.Data;
 using DataManagementService.Interfaces;
-using DataManagementService.Services;
+using System.Collections.Generic;
 
 namespace DataManagementService.Services
 {
@@ -16,39 +14,20 @@ namespace DataManagementService.Services
 
         public string Get(int enterpriseId)
         {
-            string productionFacilities = string.Empty;
-
-            SqlConnectionHelper.Connect((connection) =>
-            {
-                string queryString;
-                queryString = @$"SELECT * 
-                                 FROM production_facility_view
-                                 WHERE enterprise_id = {enterpriseId};";
-
-                using (SqlCommand command = new SqlCommand(queryString, connection))
-                {
-                    command.Connection.Open();
-                    using (SqlDataReader dataReader = command.ExecuteReader())
-                    {
-                        DataTable dataTable = new DataTable();
-                        dataTable.Load(dataReader);
-                        productionFacilities = JsonConvert.SerializeObject(dataTable);
-                    }
-                }
-            });
+            string query = @$"SELECT * 
+                       FROM production_facility_view
+                       WHERE enterprise_id = {enterpriseId};";
+            string productionFacilities = SqlConnectionHelper.GetTable(query);
 
             return productionFacilities;
         }
 
-        public string Create(int enterpriseId, string facilityName, string postAddressRecord1, string postAddressRecord2, string street, string houseNumber, string postcode, string city)
+        public string Create(int enterpriseId, string name, string postAddressRecord1, string postAddressRecord2, string street, string houseNumber, string postcode, string city)
         {
-            ProductionFacility productionFacility = new ProductionFacility(enterpriseId, facilityName, postAddressRecord1, postAddressRecord2, street, houseNumber, postcode, city);
+            Address address = new Address(postAddressRecord1, postAddressRecord2, street, houseNumber, postcode, city);
+            ProductionFacility productionFacility = new ProductionFacility(name, address, enterpriseId);
 
-            SqlConnectionHelper.Connect((connection) =>
-            {
-                string queryString;
-                // address
-                queryString = @"INSERT INTO post_address
+            string addressQuery = @"INSERT INTO post_address
 			                            (address_record_1,
                                         address_record_2,
 			                            street,
@@ -56,203 +35,72 @@ namespace DataManagementService.Services
                                         postcode,
                                         city)
                                     VALUES
-                                        (@postAddressRecord1,
-                                        @postAddressRecord2,
+                                        (@addressRecord1,
+                                        @addressRecord2,
 		                                @street,
 		                                @houseNumber,
 		                                @postcode,
                                         @city);
                                     SELECT SCOPE_IDENTITY()";
 
-                using (SqlCommand command = new SqlCommand(queryString, connection))
-                {
-                    // Insert parameters
-                    command.Parameters.AddWithValue("@postAddressRecord1", productionFacility.PostAddressRecord1);
-                    command.Parameters.AddWithValue("@postAddressRecord2", productionFacility.PostAddressRecord2);
-                    command.Parameters.AddWithValue("@street", productionFacility.Street);
-                    command.Parameters.AddWithValue("@houseNumber", productionFacility.HouseNumber);
-                    command.Parameters.AddWithValue("@postcode", productionFacility.Postcode);
-                    command.Parameters.AddWithValue("@city", productionFacility.City);
-                    command.Connection.Open();
+            IDictionary<string, object> parameterPairsAddress = new Dictionary<string, object>();
+            parameterPairsAddress.Add(new KeyValuePair<string, object>("addressRecord1", address.PostAddressRecord1));
+            parameterPairsAddress.Add(new KeyValuePair<string, object>("addressRecord2", address.PostAddressRecord2));
+            parameterPairsAddress.Add(new KeyValuePair<string, object>("street", address.Street));
+            parameterPairsAddress.Add(new KeyValuePair<string, object>("houseNumber", address.HouseNumber));
+            parameterPairsAddress.Add(new KeyValuePair<string, object>("postcode", address.Postcode));
+            parameterPairsAddress.Add(new KeyValuePair<string, object>("city", address.City));
 
-                    int postAddressId = Convert.ToInt32(command.ExecuteScalar());
-                    productionFacility.SetPostAddressId(postAddressId);
-                }
+            int addressId = SqlConnectionHelper.CreateEntry(addressQuery, parameterPairsAddress);
+            address.SetId(addressId);
 
-                // production facility
-                queryString = @"INSERT INTO production_facility
-                                        (name,
-                                        fk_enterprise,
-                                        fk_post_address)
-                                    VALUES
-		                                (@name,
-                                        @fk_enterprise,
-		                                @fk_post_address);
-                                    SELECT SCOPE_IDENTITY()";
+            string enterpriseQuery = @"INSERT INTO production_facility
+                                           (name,
+                                           fk_address)
+                                       VALUES
+		                                   (@name,
+		                                    @fk_enterprise,
+                                            @fk_post_address);
+                                       SELECT SCOPE_IDENTITY()";
 
-                using (SqlCommand command = new SqlCommand(queryString, connection))
-                {
-                    // Insert parameters
-                    command.Parameters.AddWithValue("@name", productionFacility.FacilityName);
-                    command.Parameters.AddWithValue("@fk_enterprise", productionFacility.EnterpriseId);
-                    command.Parameters.AddWithValue("@fk_post_address", productionFacility.PostAddressId);
-                    int productionFacilityId = Convert.ToInt32(command.ExecuteScalar());
-                    productionFacility.SetProductionFacilityId(productionFacilityId);
-                }
+            IDictionary<string, object> parameterPairsEnterprise = new Dictionary<string, object>();
+            parameterPairsEnterprise.Add(new KeyValuePair<string, object>("name", productionFacility.Name));
+            parameterPairsEnterprise.Add(new KeyValuePair<string, object>("fk_enterprise", productionFacility.EnterpriseId));
+            parameterPairsEnterprise.Add(new KeyValuePair<string, object>("fk_post_address", productionFacility.Address.Id));
+            int productionFacilityId = SqlConnectionHelper.CreateEntry(enterpriseQuery, parameterPairsEnterprise);
+            productionFacility.Address.SetId(productionFacilityId);
 
-                Console.WriteLine("Adresse und Facility wurden erstellt");
-            });
+            Console.WriteLine("address and production facility were successfully created.");
 
             return JsonConvert.SerializeObject(productionFacility);
         }
 
-        public int Update(int? enterpriseId, int productionFacilityId, int? postAddressId, string? facilityName, string? postAddressRecord1, string? postAddressRecord2, string? street, string? houseNumber, string? postcode, string? city)
+        public int Update(int id, int postAddressId, string? name, string? postAddressRecord1, string? postAddressRecord2, string? street, string? houseNumber, string? postcode, string? city)
         {
-            int result = 0;
-            ProductionFacility productionFacility = new ProductionFacility(productionFacilityId, postAddressId, enterpriseId, facilityName, postAddressRecord1, postAddressRecord2, street, houseNumber, postcode, city);
+            int updatedRows = 0;
+            Address address = new Address(postAddressId,postAddressRecord1, postAddressRecord2, street, houseNumber, postcode, city);
+            ProductionFacility productionFacility = new ProductionFacility(id, name, address);
 
-            SqlConnectionHelper.Connect((connection) =>
-            {
-                string queryFacility = getQueryFacility(productionFacility);
-                string queryPostAddress = getQueryPostAddress(productionFacility);
-                string query = !string.IsNullOrWhiteSpace(queryFacility) ? queryFacility : queryPostAddress;
 
-                using (SqlCommand command = new SqlCommand(query, connection))
-                {
-                    command.Connection.Open();
+            //update production faciltiy entry
+            IDictionary<string, object?> parameterPairsProductionFacility = new Dictionary<string, object?>();
+            parameterPairsProductionFacility.Add(new KeyValuePair<string, object?>("name", productionFacility.Name));
+            updatedRows += SqlConnectionHelper.UpdateEntry("production_facility", productionFacility.Id.ToString(), parameterPairsProductionFacility);
 
-                    // Start a local transaction.
-                    SqlTransaction sqlTransaction = connection.BeginTransaction();
+            //update address entry
+            IDictionary<string, object?> parameterPairsAddress = new Dictionary<string, object?>();
+            parameterPairsAddress.Add(new KeyValuePair<string, object?>("address_record_1", address.PostAddressRecord1));
+            parameterPairsAddress.Add(new KeyValuePair<string, object?>("address_record_2", address.PostAddressRecord2));
+            parameterPairsAddress.Add(new KeyValuePair<string, object?>("street", address.Street));
+            parameterPairsAddress.Add(new KeyValuePair<string, object?>("house_number", address.HouseNumber));
+            parameterPairsAddress.Add(new KeyValuePair<string, object?>("postcode", address.Postcode));
+            parameterPairsAddress.Add(new KeyValuePair<string, object?>("city", address.City));
 
-                    // Enlist a command in the current transaction.
-                    command.Transaction = sqlTransaction;
+            updatedRows += SqlConnectionHelper.UpdateEntry("post_address", address.Id.ToString(), parameterPairsAddress);
 
-                    try
-                    {
-                        if (!string.IsNullOrWhiteSpace(queryFacility))
-                        {
-                            result += updateProductionFacilityTable(productionFacility, command);
-                        }
-                        if (!string.IsNullOrWhiteSpace(queryPostAddress))
-                        {
-                            command.CommandText = queryPostAddress;
-                            result += updatePostAddressTable(productionFacility, command);
-                        }
-
-                        // Commit the transaction.
-                        sqlTransaction.Commit();
-                    }
-                    catch (SqlException error)
-                    {
-                        Console.Write(error.ToString());
-                        sqlTransaction.Rollback();
-                        throw error;
-                    }
-                }
-            });
-            return result;
+            return updatedRows;
         }
 
-        private int updatePostAddressTable(ProductionFacility productionFacility, SqlCommand command)
-        {
-            if (!string.IsNullOrWhiteSpace(productionFacility.PostAddressRecord1))
-            {
-                command.Parameters.AddWithValue("@address_record_1", productionFacility.PostAddressRecord1);
-            }
-
-            if (!string.IsNullOrWhiteSpace(productionFacility.PostAddressRecord2))
-            {
-                command.Parameters.AddWithValue("@address_record_2", productionFacility.PostAddressRecord2);
-            }
-
-            if (!string.IsNullOrWhiteSpace(productionFacility.Street))
-            {
-                command.Parameters.AddWithValue("@street", productionFacility.Street);
-            }
-
-            if (!string.IsNullOrWhiteSpace(productionFacility.HouseNumber))
-            {
-                command.Parameters.AddWithValue("@house_number", productionFacility.HouseNumber);
-            }
-
-            if (!string.IsNullOrWhiteSpace(productionFacility.Postcode))
-            {
-                command.Parameters.AddWithValue("@postcode", productionFacility.Postcode);
-            }
-
-            if (!string.IsNullOrWhiteSpace(productionFacility.City))
-            {
-                command.Parameters.AddWithValue("@city", productionFacility.City);
-            }
-
-            int result = command.ExecuteNonQuery();
-
-            return result;
-        }
-
-        private int updateProductionFacilityTable(ProductionFacility productionFacility, SqlCommand command)
-        {
-            // Insert parameters
-            if (!string.IsNullOrWhiteSpace(productionFacility.FacilityName))
-            {
-                command.Parameters.AddWithValue("@name", productionFacility.FacilityName);
-            }
-
-            int result = command.ExecuteNonQuery();
-
-            return result;
-        }
-
-        private string getQueryPostAddress(ProductionFacility productionFacility)
-        {
-            SqlQueryStringBuilder queryBuilder = new SqlQueryStringBuilder("production_facility_view", "production_facility_id", productionFacility.Id.ToString());
-
-            if (!string.IsNullOrEmpty(productionFacility.PostAddressRecord1))
-            {
-                queryBuilder.AddQueryArg("address_record_1");
-            }
-
-            if (!string.IsNullOrEmpty(productionFacility.PostAddressRecord2))
-            {
-                queryBuilder.AddQueryArg("address_record_2");
-            }
-
-            if (!string.IsNullOrEmpty(productionFacility.City))
-            {
-                queryBuilder.AddQueryArg("city");
-            }
-
-            if (!string.IsNullOrEmpty(productionFacility.Street))
-            {
-                queryBuilder.AddQueryArg("street");
-            }
-
-            if (!string.IsNullOrEmpty(productionFacility.Postcode))
-            {
-                queryBuilder.AddQueryArg("postcode");
-            }
-
-            if (!string.IsNullOrEmpty(productionFacility.HouseNumber))
-            {
-                queryBuilder.AddQueryArg("house_number");
-            }
-            string query = queryBuilder.GetSqlQueryString();
-            Console.WriteLine(query);
-            return query;
-        }
-
-        private string getQueryFacility(ProductionFacility productionFacility)
-        {
-            SqlQueryStringBuilder queryBuilder = new SqlQueryStringBuilder("production_facility_view", "production_facility_id", productionFacility.Id.ToString());
-
-            if (!string.IsNullOrEmpty(productionFacility.FacilityName))
-            {
-                queryBuilder.AddQueryArg("name");
-            }
-
-            string query = queryBuilder.GetSqlQueryString();
-            Console.WriteLine(query);
-            return query;
-        }
+        
     }
 }

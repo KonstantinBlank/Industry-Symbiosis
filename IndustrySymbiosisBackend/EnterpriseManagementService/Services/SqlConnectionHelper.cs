@@ -2,7 +2,6 @@
 using System.Data;
 using System.Data.SqlClient;
 using DataManagementService.Data;
-using EnterpriseManagementService.Data;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 
@@ -52,16 +51,16 @@ namespace DataManagementService.Services
             return id;
         }
 
-        public static int UpdateEntry(string tableName, string id, IDictionary<string, string?> parameterPairs)
+        public static int UpdateEntry(string tableName, string id, IDictionary<string, object?> parameterPairs)
         {
             int updatedRows = 0;
             connect((connection) =>
             {
                 //build query
                 SqlQueryStringBuilder queryBuilder = new SqlQueryStringBuilder(tableName, "id", id);
-                foreach (KeyValuePair<string, string?> parameterPair in parameterPairs)
+                foreach (KeyValuePair<string, object?> parameterPair in parameterPairs)
                 {
-                    queryBuilder.AddQueryArgument(parameterPair.Key, parameterPair.Value);
+                    queryBuilder.AddQueryArgument(parameterPair.Key, $"{parameterPair.Value}");
                 }
                 string query = queryBuilder.GetSqlQueryString();
                 Console.WriteLine(query);
@@ -77,12 +76,12 @@ namespace DataManagementService.Services
                         try
                         {
                             //insert values
-                            foreach (KeyValuePair<string, string?> parameterPair in parameterPairs)
+                            foreach (KeyValuePair<string, object?> parameterPair in parameterPairs)
                             {
                                 string key = parameterPair.Key;
-                                string? value = parameterPair.Value;
+                                object? value = parameterPair.Value;
 
-                                if (!string.IsNullOrWhiteSpace(value))
+                                if (value != null)
                                 {
                                     command.Parameters.AddWithValue("@" + key, value);
                                 }

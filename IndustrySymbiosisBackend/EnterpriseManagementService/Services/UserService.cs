@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Data.SqlClient;
 using DataManagementService.Services;
 using EnterpriseManagement.Interfaces;
 using EnterpriseManagementService.Data;
@@ -62,10 +61,10 @@ namespace EnterpriseManagement.Services
             // user cannot change the enterprise
             User user = new User(userId, -1, firstName, surname, email);
 
-            IDictionary<string, string?> parameterPairs = new Dictionary<string, string?>();
-            parameterPairs.Add(new KeyValuePair<string, string?>("first_name", user.FirstName));
-            parameterPairs.Add(new KeyValuePair<string, string?>("surname", user.Surname));
-            parameterPairs.Add(new KeyValuePair<string, string?>("email", user.Email));
+            IDictionary<string, object?> parameterPairs = new Dictionary<string, object?>();
+            parameterPairs.Add(new KeyValuePair<string, object?>("first_name", user.FirstName));
+            parameterPairs.Add(new KeyValuePair<string, object?>("surname", user.Surname));
+            parameterPairs.Add(new KeyValuePair<string, object?>("email", user.Email));
 
             int result = SqlConnectionHelper.UpdateEntry("enterprise_user", user.Id.ToString(), parameterPairs);
 

@@ -2,14 +2,12 @@
 using System;
 using EnterpriseManagement.Services;
 
-
 namespace EnterpriseManagement.Controllers
 {
     [Route("api/users/")]
     [ApiController]
     public class UserController : ControllerBase
     {
-
         private UserService _userService = new UserService();
 
 

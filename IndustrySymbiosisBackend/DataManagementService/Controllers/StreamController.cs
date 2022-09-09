@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace DataManagementService.Controllers
 {
     [ApiController]
-    [Route("api/stream")]
+    [Route("api/stream/")]
     public class StreamController : ControllerBase
     {
         private StreamService _streamService;

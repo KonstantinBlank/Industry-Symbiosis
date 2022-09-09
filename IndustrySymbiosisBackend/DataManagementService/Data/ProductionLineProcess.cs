@@ -1,13 +1,13 @@
 ﻿using System;
 namespace DataManagementService.Data
 {
-    public class ProductionLineProcess
+    public class ProductionLineProcess : IQueryObject
     {
         public int Id { get; private set; }
-        public int ProductionLineId { get; private set; }
-        public string Name { get; private set; }
+        public int? ProductionLineId { get; private set; }
+        public string? Name { get; private set; }
 
-        public ProductionLineProcess(int id, int productionLineId, string name)
+        public ProductionLineProcess(int id, int? productionLineId, string? name)
         {
             Id = id;
             ProductionLineId = productionLineId;
@@ -21,7 +21,7 @@ namespace DataManagementService.Data
             Name = name ?? throw new ArgumentNullException(nameof(name));
         }
 
-        public void SetProductionLineProcessId(int id)
+        public void SetId(int id)
         {
             if (Id == -1)
             {

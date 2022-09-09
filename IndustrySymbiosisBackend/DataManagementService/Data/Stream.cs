@@ -1,7 +1,7 @@
 ﻿using System;
 namespace DataManagementService.Data
 {
-    public class Stream
+    public class Stream : IQueryObject
     {
         public int Id { get; private set; }
         public int? ProductionLineProcessId { get; private set; }
@@ -78,7 +78,7 @@ namespace DataManagementService.Data
             }
         }
 
-        public void SetStreamId(int id)
+        public void SetId(int id)
         {
             if (Id == -1)
             {

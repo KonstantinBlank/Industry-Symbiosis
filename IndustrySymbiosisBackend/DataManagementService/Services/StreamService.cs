@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using DataManagementService.Data;
@@ -15,26 +16,11 @@ namespace DataManagementService.Services
 
         public string Get(int productionLineProcessId)
         {
-            string streams = string.Empty;
+            string query = @$"SELECT * 
+                              FROM stream
+                              WHERE fk_production_line_process = {productionLineProcessId};";
 
-            SqlConnectionHelper.Connect((connection) =>
-            {
-                string queryString;
-                queryString = @$"SELECT * 
-                                 FROM stream
-                                 WHERE fk_production_line_process = {productionLineProcessId};";
-
-                using (SqlCommand command = new SqlCommand(queryString, connection))
-                {
-                    command.Connection.Open();
-                    using (SqlDataReader dataReader = command.ExecuteReader())
-                    {
-                        DataTable dataTable = new DataTable();
-                        dataTable.Load(dataReader);
-                        streams = JsonConvert.SerializeObject(dataTable);
-                    }
-                }
-            });
+            string streams = SqlConnectionHelper.GetTable(query);
 
             return streams;
         }
@@ -43,167 +29,57 @@ namespace DataManagementService.Services
         {
             Stream stream = new Stream(productionLineProcessId, isInput, materialId, energyId, amount, interval);
 
-            SqlConnectionHelper.Connect((connection) =>
-            {
-                string queryString = getCreateQuery(stream);
-
-                using (SqlCommand command = new SqlCommand(queryString, connection))
-                {
-                    // Insert parameters
-                    command.Parameters.AddWithValue("@fk_production_line_process", stream.ProductionLineProcessId);
-                    command.Parameters.AddWithValue("@is_input", stream.IsInput);
-                    if (stream.MaterialId != null)
-                    {
-                        command.Parameters.AddWithValue("@fk_material", stream.MaterialId);
-                    }
-                    if (stream.EnergyId != null)
-                    {
-                        command.Parameters.AddWithValue("@fk_energy_source", stream.EnergyId);
-                    }
-                    command.Parameters.AddWithValue("@amount", stream.Amount);
-                    command.Parameters.AddWithValue("@interval", stream.Interval);
-                    command.Connection.Open();
-                    int streamId = Convert.ToInt32(command.ExecuteScalar());
-                    stream.SetStreamId(streamId);
-                }
-            });
-
-            return JsonConvert.SerializeObject(stream);
-        }
-
-        private string getCreateQuery(Stream stream)
-        {
             string query;
-            string column = (stream.MaterialId != null) ? "fk_material" : "fk_energy_source"; 
+            string column = (stream.MaterialId != null) ? "fk_material" : "fk_energy_source";
             query = @$"INSERT INTO stream
                             (fk_production_line_process,
                             is_input,
                             {column},
                             amount,
                             interval)
-                           VALUES
+                       VALUES
                             (@fk_production_line_process,
                             @is_input,
                             @{column},
                             @amount,
                             @interval)
                            SELECT SCOPE_IDENTITY()";
-            
-            return query;
-        }
 
+
+            IDictionary<string, object> parameterPairs = new Dictionary<string, object>();
+            parameterPairs.Add("fk_production_line_process", stream.ProductionLineProcessId);
+            parameterPairs.Add("is_input", stream.IsInput);
+            parameterPairs.Add("fk_material", stream.MaterialId);
+            parameterPairs.Add("fk_energy_source", stream.EnergyId);
+            parameterPairs.Add("amount", stream.Amount);
+            parameterPairs.Add("interval", stream.Interval);
+
+
+            int streamId = SqlConnectionHelper.CreateEntry(query, parameterPairs);
+            stream.SetId(streamId);
+
+            Console.WriteLine("production line process entry was successfully created!");
+
+            return JsonConvert.SerializeObject(stream);
+        }
 
         public int Update(int id, int? productionLineProcessId, bool? isInput, int? materialId, int? energyId, int? amount, int? interval)
         {
-            int result = 0;
             Stream stream = new Stream(id, productionLineProcessId, isInput, materialId, energyId, amount, interval);
 
-            SqlConnectionHelper.Connect((connection) =>
-            {
-                string query = getUpdateQuery(stream);
+            IDictionary<string, object?> parameterPairs = new Dictionary<string, object?>();
+            parameterPairs.Add("fk_production_line_process", stream.ProductionLineProcessId);
+            parameterPairs.Add("is_input", stream.IsInput);
+            parameterPairs.Add("fk_material", stream.MaterialId);
+            parameterPairs.Add("fk_energy_source", stream.EnergyId);
+            parameterPairs.Add("amount", stream.Amount);
+            parameterPairs.Add("interval", stream.Interval);
 
-                using (SqlCommand command = new SqlCommand(query, connection))
-                {
-                    command.Connection.Open();
-
-                    // Start a local transaction.
-                    SqlTransaction sqlTransaction = connection.BeginTransaction();
-
-                    // Enlist a command in the current transaction.
-                    command.Transaction = sqlTransaction;
-
-                    try
-                    {
-                        insertCommandParameters(stream, command);
-
-                        result += command.ExecuteNonQuery();
-
-                        sqlTransaction.Commit();
-                    }
-                    catch (SqlException error)
-                    {
-                        Console.Write(error.ToString());
-                        sqlTransaction.Rollback();
-                        throw error;
-                    }
-                }
-            });
+            int result = SqlConnectionHelper.UpdateEntry("stream", stream.Id.ToString(), parameterPairs);
 
             return result;
         }
 
-        private void insertCommandParameters(Stream stream, SqlCommand command)
-        {
-            // Insert parameters
-            if (stream.ProductionLineProcessId != null)
-            {
-                command.Parameters.AddWithValue("@fk_production_line_process", stream.ProductionLineProcessId);
-            }
-
-            if (stream.IsInput != null)
-            {
-                command.Parameters.AddWithValue("@is_input", stream.IsInput);
-            }
-
-            if (stream.MaterialId != null)
-            {
-                command.Parameters.AddWithValue("@fk_material", stream.MaterialId);
-            }
-
-            if (stream.EnergyId != null)
-            {
-                command.Parameters.AddWithValue("@fk_energy_source", stream.EnergyId);
-            }
-
-            if (stream.Amount != null)
-            {
-                command.Parameters.AddWithValue("@amount", stream.Amount);
-            }
-
-            if (stream.Interval != null)
-            {
-                command.Parameters.AddWithValue("@interval", stream.Interval);
-            }
-        }
-
-        private string getUpdateQuery(Stream stream)
-        {
-            SqlQueryStringBuilder queryBuilder = new SqlQueryStringBuilder("stream", "id", stream.Id.ToString());
-
-            if (stream.ProductionLineProcessId != null)
-            {
-                queryBuilder.AddQueryArg("fk_production_line_process");
-            }
-
-            if (stream.IsInput != null)
-            {
-                queryBuilder.AddQueryArg("is_input");
-            }
-
-            if (stream.MaterialId != null)
-            {
-                queryBuilder.AddQueryArg("fk_material");
-            }
-
-            if (stream.EnergyId != null)
-            {
-                queryBuilder.AddQueryArg("fk_energy_source");
-            }
-
-            if (stream.Amount != null)
-            {
-                queryBuilder.AddQueryArg("amount");
-            }
-
-            if (stream.Interval != null)
-            {
-                queryBuilder.AddQueryArg("interval");
-            }
-
-            string query = queryBuilder.GetSqlQueryString();
-            Console.WriteLine(query);
-            return query;
-        }
     }
 }
 

@@ -1,26 +1,28 @@
 ﻿using System;
-using System.Text.Json.Serialization;
 
 namespace DataManagementService.Data
 {
-    public class ProductionFacility : IQueryObject
+    public class EnergySource : IQueryObject
     {
         public int Id { get; private set; }
         public string? Name { get; private set; }
+        public float? RenewableShare { get; private set; }
+        public bool? IsIntern { get; private set; }
         public int? EnterpriseId { get; private set; }
-        public Address Address { get; private set; }
 
         /// <summary>
-        /// constructor for creation
+        /// constructor for creating
         /// </summary>
         /// <param name="name"></param>
-        /// <param name="address"></param>
+        /// <param name="renewableShare"></param>
+        /// <param name="isIntern"></param>
         /// <param name="enterpriseId"></param>
-        public ProductionFacility(string name, Address address, int enterpriseId)
+        public EnergySource(string name, float renewableShare, bool isIntern, int enterpriseId)
         {
             Id = -1;
             Name = name;
-            Address = address;
+            RenewableShare = renewableShare;
+            IsIntern = isIntern;
             EnterpriseId = enterpriseId;
         }
 
@@ -29,13 +31,16 @@ namespace DataManagementService.Data
         /// </summary>
         /// <param name="id"></param>
         /// <param name="name"></param>
-        /// <param name="address"></param>
-        public ProductionFacility(int id, string? name, Address address)
+        /// <param name="renewableShare"></param>
+        /// <param name="isIntern"></param>
+        public EnergySource(int id, string? name, float? renewableShare, bool? isIntern)
         {
             Id = id;
             Name = name;
-            Address = address;
-            // the enterprise can not be changed
+            RenewableShare = renewableShare;
+            IsIntern = isIntern;
+
+            // you cannot change the enterprise of an energy source
             EnterpriseId = -1;
         }
 
@@ -47,8 +52,9 @@ namespace DataManagementService.Data
             }
             else
             {
-                throw new InvalidOperationException($"The production facility id was already set. It's {Id}.");
+                throw new InvalidOperationException($"The energy source id was already set. It's {Id}.");
             }
         }
     }
 }
+

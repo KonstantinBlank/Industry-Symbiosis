@@ -1,11 +1,10 @@
-﻿using System;
-namespace DataManagementService.Interfaces
+﻿namespace DataManagementService.Interfaces
 {
     public interface IProductionLineProcessService
     {
-        string Get(int productionProcessId);
-        string Create(int productionFacilityId, string name);
-        int Update(int productionLineId, string name);
+        string Get(int productionLineId);
+        string Create(int productionLineId, string name);
+        int Update(int id, int? productionLineId, string? name);
     }
 }
 

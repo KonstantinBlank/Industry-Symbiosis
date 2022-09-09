@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Data;
-using System.Data.SqlClient;
+using System.Collections.Generic;
 using DataManagementService.Data;
 using DataManagementService.Interfaces;
 using Newtonsoft.Json;
@@ -15,102 +14,44 @@ namespace DataManagementService.Services
 
         public string Get(int productionFacilityId)
         {
-            string productionLines = string.Empty;
+            string query = @$"SELECT * 
+                              FROM production_line
+                              WHERE fk_production_facility = {productionFacilityId};";
 
-            SqlConnectionHelper.Connect((connection) =>
-            {
-                string queryString;
-                queryString = @$"SELECT * 
-                                 FROM production_line
-                                 WHERE fk_production_facility = {productionFacilityId};";
-
-                using (SqlCommand command = new SqlCommand(queryString, connection))
-                {
-                    command.Connection.Open();
-                    using (SqlDataReader dataReader = command.ExecuteReader())
-                    {
-                        DataTable dataTable = new DataTable();
-                        dataTable.Load(dataReader);
-                        productionLines = JsonConvert.SerializeObject(dataTable);
-                    }
-                }
-            });
+            string productionLines = SqlConnectionHelper.GetTable(query);
 
             return productionLines;
         }
 
         public string Create(int productionFacilityId, string name)
         {
-            ProductionLine productionLine = new ProductionLine(productionFacilityId, name);
-            SqlConnectionHelper.Connect((connection) =>
-            {
-                string queryString = @$"INSERT INTO production_line (fk_production_facility,name)
-                                       VALUES (@fk_production_facility, @name)
-                                       SELECT SCOPE_IDENTITY()";
+            string query = @$"INSERT INTO production_line (fk_production_facility,name)
+                                  VALUES (@fk_production_facility, @name)
+                                  SELECT SCOPE_IDENTITY()";
 
-                using (SqlCommand command = new SqlCommand(queryString, connection))
-                {
-                    // Insert parameters
-                    command.Parameters.AddWithValue("@fk_production_facility", productionLine.ProductionFacilityId);
-                    command.Parameters.AddWithValue("@name", productionLine.Name);
-                    command.Connection.Open();
-                    int productionLineId = Convert.ToInt32(command.ExecuteScalar());
-                    productionLine.SetProductionLineId(productionLineId);
-                }
-            });
+            ProductionLine productionLine = new ProductionLine(productionFacilityId, name);
+
+            IDictionary<string, object> parameterPairs = new Dictionary<string, object>();
+            parameterPairs.Add("fk_production_facility", productionLine.ProductionFacilityId);
+            parameterPairs.Add("name", productionLine.Name);
+
+            int productionLineId = SqlConnectionHelper.CreateEntry(query, parameterPairs);
+            productionLine.SetId(productionLineId);
+
+            Console.WriteLine("production line process entry was successfully created!");
 
             return JsonConvert.SerializeObject(productionLine);
         }
 
-        public int Update(int productionLineId, string name)
+        public int Update(int id, int? productionFacilityId, string? name)
         {
-            int result = 0;
-            ProductionLine productionLine = new ProductionLine(productionLineId, name);
+            ProductionLine productionLine = new ProductionLine(id, productionFacilityId, name);
 
-            SqlConnectionHelper.Connect((connection) =>
-            {
+            IDictionary<string, object?> parameterPairs = new Dictionary<string, object?>();
+            parameterPairs.Add(new KeyValuePair<string, object?>("productionFacilityId", productionLine.ProductionFacilityId));
+            parameterPairs.Add(new KeyValuePair<string, object?>("name", productionLine.Name));
 
-                SqlQueryStringBuilder queryBuilder = new SqlQueryStringBuilder("production_line", "id", productionLine.Id.ToString());
-
-                if (!string.IsNullOrEmpty(productionLine.Name))
-                {
-                    queryBuilder.AddQueryArg("name");
-                }
-
-                string query = queryBuilder.GetSqlQueryString();
-                Console.WriteLine(query);
-                
-
-                using (SqlCommand command = new SqlCommand(query, connection))
-                {
-                    command.Connection.Open();
-
-                    // Start a local transaction.
-                    SqlTransaction sqlTran = connection.BeginTransaction();
-
-                    // Enlist a command in the current transaction.
-                    command.Transaction = sqlTran;
-
-                    try
-                    {
-                        // Insert parameters
-                        if (!string.IsNullOrWhiteSpace(productionLine.Name))
-                        {
-                            command.Parameters.AddWithValue("@name", productionLine.Name);
-                        }
-
-                        result += command.ExecuteNonQuery();
-
-                        sqlTran.Commit();
-                    }
-                    catch (SqlException error)
-                    {
-                        Console.Write(error.ToString());
-                        sqlTran.Rollback();
-                        throw error;
-                    }
-                }
-            });
+            int result = SqlConnectionHelper.UpdateEntry("production_line", productionLine.Id.ToString(), parameterPairs);
 
             return result;
         }
