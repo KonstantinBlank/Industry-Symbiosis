@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Data;
 using System.Data.SqlClient;
 using DataManagementService.Services;
 using EnterpriseManagement.Interfaces;
 using EnterpriseManagementService.Data;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace EnterpriseManagement.Services
@@ -17,153 +17,59 @@ namespace EnterpriseManagement.Services
         public string Create(int enterpriseId, string firstName, string surname, string email)
         {
             User user = new User(enterpriseId, firstName, surname, email);
-            SqlConnectionHelper.Connect((connection) =>
-            {
-                string queryString = @$"INSERT INTO enterprise_user (first_name, surname, email, fk_enterprise)
-                                       VALUES (@firstname, @surname, @email, @fk_enterprise)
-                                       SELECT SCOPE_IDENTITY()";
 
-                using (SqlCommand command = new SqlCommand(queryString, connection))
-                {
-                    // Insert parameters
-                    command.Parameters.AddWithValue("@firstname", user.FirstName);
-                    command.Parameters.AddWithValue("@surname", user.Surname);
-                    command.Parameters.AddWithValue("@email", user.Email);
-                    command.Parameters.AddWithValue("@fk_enterprise", user.EnterpriseId);
-                    command.Connection.Open();
-                    int userId = Convert.ToInt32(command.ExecuteScalar());
-                    user.SetId(userId);
-                }
-            });
+            string query = @$"INSERT INTO enterprise_user (first_name, surname, email, fk_enterprise)
+                              VALUES (@firstname, @surname, @email, @fk_enterprise)
+                              SELECT SCOPE_IDENTITY()";
+            IDictionary<string, object> parameterPairs = new Dictionary<string, object>();
+            parameterPairs.Add("firstname", user.FirstName);
+            parameterPairs.Add("surname", user.Surname);
+            parameterPairs.Add("email", user.Email);
+            parameterPairs.Add("fk_enterprise", user.EnterpriseId);
+
+            int userId = SqlConnectionHelper.CreateEntry(query, parameterPairs);
+            user.SetId(userId);
+
+            Console.WriteLine("user entry was successfully created!");
 
             return JsonConvert.SerializeObject(user);
         }
 
         public string GetById(int userId)
         {
-            string users = string.Empty;
+            string query = @$"SELECT id, first_name, surname, email
+                              FROM enterprise_user
+                              WHERE id = {userId};";
 
-            SqlConnectionHelper.Connect((connection) =>
-            {
-                string queryString;
-                queryString = @$"SELECT id, first_name, surname, email
-                                    FROM enterprise_user
-                                    WHERE id = {userId};";
+            string user = SqlConnectionHelper.GetTable(query);
 
-                using (SqlCommand command = new SqlCommand(queryString, connection))
-                {
-                    command.Connection.Open();
-                    using (SqlDataReader dataReader = command.ExecuteReader())
-                    {
-                        DataTable dataTable = new DataTable();
-                        dataTable.Load(dataReader);
-                        users = JsonConvert.SerializeObject(dataTable);
-                    }
-                }
-            });
-
-            return users;
+            return user;
         }
 
         public string GetAllFromEnterprise(int enterpriseId)
         {
-            string users = string.Empty;
-
-            SqlConnectionHelper.Connect((connection) =>
-            {
-                string queryString;
-                queryString = @$"SELECT id, first_name, surname, email
+            string query = @$"SELECT id, first_name, surname, email
                                  FROM enterprise_user
                                  WHERE fk_enterprise = {enterpriseId};";
 
-                using (SqlCommand command = new SqlCommand(queryString, connection))
-                {
-                    command.Connection.Open();
-                    using (SqlDataReader dataReader = command.ExecuteReader())
-                    {
-                        DataTable dataTable = new DataTable();
-                        dataTable.Load(dataReader);
-                        users = JsonConvert.SerializeObject(dataTable);
-                    }
-                }
-            });
+            string users = SqlConnectionHelper.GetTable(query);
 
             return users;
         }
 
-        public int UpdateUser(int userId, string? firstName, string? surname, string? email)
+        public int Update(int userId, string? firstName, string? surname, string? email)
         {
-            int result = 0;
             // user cannot change the enterprise
             User user = new User(userId, -1, firstName, surname, email);
 
-            SqlConnectionHelper.Connect((connection) =>
-            {
-                string query = getQuery(user);
+            IDictionary<string, string?> parameterPairs = new Dictionary<string, string?>();
+            parameterPairs.Add(new KeyValuePair<string, string?>("first_name", user.FirstName));
+            parameterPairs.Add(new KeyValuePair<string, string?>("surname", user.Surname));
+            parameterPairs.Add(new KeyValuePair<string, string?>("email", user.Email));
 
-                using (SqlCommand command = new SqlCommand(query, connection))
-                {
-                    command.Connection.Open();
-                    SqlTransaction sqlTransaction = connection.BeginTransaction();
-                    command.Transaction = sqlTransaction;
-
-                    try
-                    {
-                        result += updateUserTable(command, user);
-                        sqlTransaction.Commit();
-                    }
-                    catch (SqlException error)
-                    {
-                        Console.Write(error.ToString());
-                        sqlTransaction.Rollback();
-                        throw error;
-                    }
-                }
-            });
+            int result = SqlConnectionHelper.UpdateEntry("enterprise_user", user.Id.ToString(), parameterPairs);
 
             return result;
         }
-
-        private int updateUserTable(SqlCommand command, User user)
-        {
-            addParatemterWithValue(command, "first_name", user.FirstName);
-            addParatemterWithValue(command, "surname", user.Surname);
-            addParatemterWithValue(command, "email", user.Email);
-
-            return command.ExecuteNonQuery();
-        }
-
-        private void addParatemterWithValue(SqlCommand command, string key, string? value)
-        {
-            if (!string.IsNullOrWhiteSpace(value))
-            {
-                command.Parameters.AddWithValue(key, value);
-            }
-        }
-
-        private string getQuery(User user)
-        {
-            SqlQueryStringBuilder queryBuilder = new SqlQueryStringBuilder("enterprise_user", "id", user.Id.ToString());
-
-            if (!string.IsNullOrEmpty(user.FirstName))
-            {
-                queryBuilder.AddQueryArg("first_name");
-            }
-
-            if (!string.IsNullOrEmpty(user.Surname))
-            {
-                queryBuilder.AddQueryArg("surname");
-            }
-
-            if (!string.IsNullOrEmpty(user.Email))
-            {
-                queryBuilder.AddQueryArg("email");
-            }
-
-            string query = queryBuilder.GetSqlQueryString();
-            Console.WriteLine(query);
-            return query;
-        }
     }
 }
-

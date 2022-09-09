@@ -1,15 +1,11 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
+﻿using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Data;
-using System.Data.SqlClient;
 using EnterpriseManagement.Services;
 
 
 namespace EnterpriseManagement.Controllers
 {
-    [Route("api/enterprises]")]
+    [Route("api/enterprises/")]
     [ApiController]
     public class EnterpriseController : ControllerBase
     {
@@ -32,7 +28,7 @@ namespace EnterpriseManagement.Controllers
             return Ok(enterprises);
         }
 
-        [HttpGet("get/")]
+        [HttpGet("get/{enterpriseId}")]
         public ActionResult GetById(int enterpriseId)
         {
             string enterprise = _enterpriseService.GetById(enterpriseId);

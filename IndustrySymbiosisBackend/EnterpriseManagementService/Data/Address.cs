@@ -1,7 +1,7 @@
 ﻿using System;
 namespace EnterpriseManagementService.Data
 {
-    public class Address
+    public class Address : IQueryObject
     {
         public int Id { get; private set; }
         public string? FacilityName { get; private set; }

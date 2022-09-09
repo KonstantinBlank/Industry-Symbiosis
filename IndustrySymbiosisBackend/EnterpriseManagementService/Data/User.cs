@@ -1,13 +1,13 @@
 ﻿using System;
 namespace EnterpriseManagementService.Data
 {
-    public class User
+    public class User : IQueryObject
     {
         public int Id { get; private set; }
-        public string? FirstName { get; private set; }
-        public string? Surname { get; private set; }
-        public string? Email { get; private set; }
-        public int? EnterpriseId { get; private set; }
+        public string? FirstName { get; }
+        public string? Surname { get; }
+        public string? Email { get; }
+        public int? EnterpriseId { get; }
 
         public User(int enterpriseId, string firstName, string surname, string email)
         {

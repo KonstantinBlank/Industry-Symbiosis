@@ -1,15 +1,11 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
+﻿using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Data;
-using System.Data.SqlClient;
 using EnterpriseManagement.Services;
 
 
 namespace EnterpriseManagement.Controllers
 {
-    [Route("api/user")]
+    [Route("api/users/")]
     [ApiController]
     public class UserController : ControllerBase
     {
@@ -17,7 +13,7 @@ namespace EnterpriseManagement.Controllers
         private UserService _userService = new UserService();
 
 
-        [HttpGet("get/")]
+        [HttpGet("get/{userId}")]
         public ActionResult GetById(int userId)
         {
             string user = _userService.GetById(userId);
@@ -51,7 +47,7 @@ namespace EnterpriseManagement.Controllers
         [HttpPost("update/")]
         public IActionResult Update(int userId, string? firstName, string? surname, string? email)
         {
-            int updatedRows = _userService.UpdateUser(userId, firstName, surname, email);
+            int updatedRows = _userService.Update(userId, firstName, surname, email);
 
             Console.WriteLine("API Abfrage durchgeführt");
 

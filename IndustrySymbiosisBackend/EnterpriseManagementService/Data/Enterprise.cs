@@ -1,7 +1,7 @@
 ﻿using System;
 namespace EnterpriseManagementService.Data
 {
-    public class Enterprise
+    public class Enterprise : IQueryObject
     {
         public int Id { get; private set; }
         public string? Name { get; private set; }
@@ -34,7 +34,7 @@ namespace EnterpriseManagementService.Data
             Address = address;
         }
 
-        internal void SetId(int id)
+        public void SetId(int id)
         {
             if (Id == -1)
             {
