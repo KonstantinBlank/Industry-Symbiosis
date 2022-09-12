@@ -17,7 +17,7 @@ namespace EnterpriseManagement.Controllers
             _streamMatchingService = matchingService;
         }
 
-
+        /*
         [HttpGet("/inputstreams/enterprise/{enterpriseID}")] // api/matching/inputstreams/enterprise/{enterpriseID}
         public ActionResult GetAvailableInputStreams(int enterpriseId)
         {
@@ -60,52 +60,48 @@ namespace EnterpriseManagement.Controllers
             return Ok(streamsJSON);
         }
 
-
-        [HttpGet("streams/allmatches/{enterpriseId}")] // api/matching/outputstreams/all/
-        public ActionResult create(string enterpriseId)
-        {
-
-            return Ok();
-        }
-
+        */
 
         [HttpGet("streams/proposed/outgoing/{enterpriseId}")] // api/matching/outputstreams/all/
-        public ActionResult create(string enterpriseId)
+        public ActionResult proposeOutgoing(string enterpriseId)
         {
 
             return Ok();
         }
 
         [HttpGet("streams/proposed/incoming/{enterpriseId}")] // api/matching/outputstreams/all/
-        public ActionResult create(string enterpriseId)
+        public ActionResult proposeIncoming(string enterpriseId)
         {
 
             return Ok();
         }
 
         [HttpPost("propose/")] // api/matching/outputstreams/all/
-        public ActionResult create(bool selectedIsInput, string selectedStreamId, string requestedStreamId, float amount, int invervall, float priceProposal, string comment)
+        public ActionResult propose(int enterpriseId, bool selectedIsInput, int selectedStreamId, int requestedStreamId, float amount, int invervall, float priceProposal, string comment)
         {
+            int result = _streamMatchingService.propose(enterpriseId, selectedIsInput, selectedStreamId, requestedStreamId, amount, priceProposal, comment);
 
-            return Ok();
+            Console.WriteLine("API abfrage erfolgreich");
+
+            return Ok(result);
         }
 
         [HttpPost("cancel/")] // api/matching/outputstreams/all/
-        public ActionResult create(string selectedStreamId, string requestedStreamId)
+        public ActionResult cancel(string selectedStreamId, string requestedStreamId)
         {
 
             return Ok();
         }
 
         [HttpPost("decline/")] // api/matching/outputstreams/all/
-        public ActionResult create(string selectedStreamId, string requestedStreamId)
+        public ActionResult decline(string selectedStreamId, string requestedStreamId)
         {
 
             return Ok();
         }
 
         [HttpPost("accept/")] // api/matching/outputstreams/all/
-        public ActionResult create(string selectedStreamId, string requestedStreamId)
+        public ActionResult accept(string matchId)
         {
 
             return Ok();
