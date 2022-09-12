@@ -36,7 +36,7 @@ namespace EnterpriseManagement.Services
 
         public string GetById(int userId)
         {
-            string query = @$"SELECT id, first_name, surname, email
+            string query = @$"SELECT id, first_name, surname, email, fk_enterprise as enterprise
                               FROM enterprise_user
                               WHERE id = {userId};";
 
@@ -47,7 +47,7 @@ namespace EnterpriseManagement.Services
 
         public string GetAllFromEnterprise(int enterpriseId)
         {
-            string query = @$"SELECT id, first_name, surname, email
+            string query = @$"SELECT id, first_name, surname, email, fk_enterprise as enterprise
                                  FROM enterprise_user
                                  WHERE fk_enterprise = {enterpriseId};";
 
