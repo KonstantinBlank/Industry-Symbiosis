@@ -55,8 +55,8 @@ namespace MatchingService.Services
                 string queryString;
                 queryString = @$"SELECT stream_enterprise_id.enterprise_id, stream_view.* FROM stream_unmatched
                                  LEFT JOIN stream_enterprise_id
-                                 ON stream_unmatched.id = stream_enterprise_id.stream_id
-	                                LEFT join stream_view
+                                    ON stream_unmatched.id = stream_enterprise_id.stream_id
+	                             LEFT join stream_view
 	                                ON stream_unmatched.id = stream_view.id;
                                  WHERE stream_view.is_input = 0 AND stream_enterprise_id.enterprise_id = {enterpriseId};";
 
@@ -115,11 +115,13 @@ namespace MatchingService.Services
 
                 if (materialFK == null)
                 {
-                    queryString = @$"SELECT stream_enterprise_id.enterprise_id, stream_view.* FROM stream_unmatched
+                    queryString = @$"SELECT stream_enterprise_id.enterprise_id, enterprise.name AS enterprise_name, stream_view.* FROM stream_unmatched
                                                 LEFT JOIN stream_enterprise_id
-                                                ON stream_unmatched.id = stream_enterprise_id.stream_id
+													ON stream_unmatched.id = stream_enterprise_id.stream_id
 	                                            LEFT join stream_view
-	                                            ON stream_unmatched.id = stream_view.id
+													ON stream_unmatched.id = stream_view.id
+												LEFT JOIN enterprise
+													ON stream_enterprise_id.enterprise_id = enterprise.id
                                                 WHERE stream_view.is_input = 1 AND stream_view.fk_material = {materialFK};";
                 }
 
@@ -127,9 +129,11 @@ namespace MatchingService.Services
                 {
                     queryString = @$"SELECT stream_enterprise_id.enterprise_id, stream_view.* FROM stream_unmatched
                                                 LEFT JOIN stream_enterprise_id
-                                                ON stream_unmatched.id = stream_enterprise_id.stream_id
+                                                    ON stream_unmatched.id = stream_enterprise_id.stream_id
 	                                            LEFT join stream_view
-	                                            ON stream_unmatched.id = stream_view.id
+	                                                ON stream_unmatched.id = stream_view.id
+                                                LEFT JOIN enterprise
+													ON stream_enterprise_id.enterprise_id = enterprise.id
                                                 WHERE stream_view.is_input = 1 AND stream_view.fk_energy_source = {energySourceFK};";
 
                 }
@@ -194,9 +198,11 @@ namespace MatchingService.Services
                 {
                     queryString = @$"SELECT stream_enterprise_id.enterprise_id, stream_view.* FROM stream_unmatched
                                                 LEFT JOIN stream_enterprise_id
-                                                ON stream_unmatched.id = stream_enterprise_id.stream_id
+                                                    ON stream_unmatched.id = stream_enterprise_id.stream_id
 	                                            LEFT join stream_view
-	                                            ON stream_unmatched.id = stream_view.id
+	                                                ON stream_unmatched.id = stream_view.id
+                                                LEFT JOIN enterprise
+													ON stream_enterprise_id.enterprise_id = enterprise.id
                                                 WHERE stream_view.is_output = 1 AND stream_view.fk_material = {materialFK};";
                 }
 
@@ -204,9 +210,11 @@ namespace MatchingService.Services
                 {
                     queryString = @$"SELECT stream_enterprise_id.enterprise_id, stream_view.* FROM stream_unmatched
                                                 LEFT JOIN stream_enterprise_id
-                                                ON stream_unmatched.id = stream_enterprise_id.stream_id
+                                                    ON stream_unmatched.id = stream_enterprise_id.stream_id
 	                                            LEFT join stream_view
-	                                            ON stream_unmatched.id = stream_view.id
+	                                                ON stream_unmatched.id = stream_view.id
+                                                LEFT JOIN enterprise
+													ON stream_enterprise_id.enterprise_id = enterprise.id
                                                 WHERE stream_view.is_output = 1 AND stream_view.fk_energy_source = {energySourceFK};";
 
                 }

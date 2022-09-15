@@ -50,10 +50,10 @@ namespace EnterpriseManagement.Controllers
             return Ok(streamsJSON);
         }
 
-        [HttpGet("outputstreams/allmatching/{inputStreamId}")] // api/matching/outputstreams/allmatching/{outputStreamId}
+        [HttpGet("outputstreams/allmatching/{inputStreamId}")] // api/matching/outputstreams/allmatching/{intputStreamId}
         public ActionResult GetMatchingInputStreams(int inputStreamId)
         {
-            string streamsJSON = _streamMatchingService.GetMatchingInputStreams(inputStreamId);
+            string streamsJSON = _streamMatchingService.GetMatchingOutputStreams(inputStreamId);
 
             Console.WriteLine("API abfrage erfolgreich");
 
