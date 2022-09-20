@@ -74,7 +74,7 @@ namespace MatchingService.Services
 
             return streams;
         }
-
+*/
         public string GetMatchingInputStreams(int outputstreamId)
         {
             string streams = string.Empty;
@@ -84,9 +84,9 @@ namespace MatchingService.Services
             int? amount = null;
 
 
-
+            /*
             // Attribute vom Outputstream laden
-            SqlConnectionHelper.Connect((connection) =>
+            SqlConnectionHelper.GetTable((connection) =>
             {
                 string queryString;
                 queryString = @$"SELECT stream_view.fk_material, stream_view.fk_energy_source, stream_view.amount FROM stream_unmatched
@@ -107,9 +107,96 @@ namespace MatchingService.Services
                     }
                 }
             });
+            */
+
+            try
+            {
+                string connectionString;
+                connectionString = "Data Source=tcp:insym.database.windows.net,1433;Initial Catalog=Industrie-Symbiose_db;User Id=insym_adm@insym;Password=jio:90u?..Q++";
+
+                using (SqlConnection connection = new SqlConnection(connectionString)) //auto close connection with using
+                {
+                    string queryString;
+                    queryString = @$"SELECT stream_view.fk_material, stream_view.fk_energy_source, stream_view.amount FROM stream_unmatched
+	                                LEFT join stream_view
+	                                ON stream_unmatched.id = stream_view.id
+                                    WHERE stream_unmatched.id = {outputstreamId};";
+
+                    using (SqlCommand command = new SqlCommand(queryString, connection))
+                    {
+                        command.Connection.Open();
+                        using (SqlDataReader dataReader = command.ExecuteReader())
+                        {
+                            dataReader.Read();
+                            materialFK = dataReader.GetInt32(0);
+                            if (!dataReader.IsDBNull(1)) energySourceFK = dataReader.GetInt32(1);
+                            amount = dataReader.GetInt32(2);
+                        }
+                    }
+                }
+            }
+            catch (SqlException e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+
 
             // Nach passenden InputStreams filtern
-            SqlConnectionHelper.Connect((connection) =>
+            try
+            {
+                string connectionString;
+                connectionString = "Data Source=tcp:insym.database.windows.net,1433;Initial Catalog=Industrie-Symbiose_db;User Id=insym_adm@insym;Password=jio:90u?..Q++";
+
+                using (SqlConnection connection = new SqlConnection(connectionString)) //auto close connection with using
+                {
+                    string queryString;
+                    if (materialFK != null)
+                    {
+                        queryString = @$"SELECT stream_enterprise_id.enterprise_id, enterprise.name AS enterprise_name, stream_view.* FROM stream_unmatched
+                                                LEFT JOIN stream_enterprise_id
+													ON stream_unmatched.id = stream_enterprise_id.stream_id
+	                                            LEFT join stream_view
+													ON stream_unmatched.id = stream_view.id
+												LEFT JOIN enterprise
+													ON stream_enterprise_id.enterprise_id = enterprise.id
+                                                WHERE stream_view.is_input = 1 AND stream_view.fk_material = {materialFK};";
+                    }
+
+                    else // energySourceFk != null
+                    {
+                        queryString = @$"SELECT stream_enterprise_id.enterprise_id, stream_view.* FROM stream_unmatched
+                                                LEFT JOIN stream_enterprise_id
+                                                    ON stream_unmatched.id = stream_enterprise_id.stream_id
+	                                            LEFT join stream_view
+	                                                ON stream_unmatched.id = stream_view.id
+                                                LEFT JOIN enterprise
+													ON stream_enterprise_id.enterprise_id = enterprise.id
+                                                WHERE stream_view.is_input = 1 AND stream_view.fk_energy_source = {energySourceFK};";
+
+                    }
+
+                    using (SqlCommand command = new SqlCommand(queryString, connection))
+                    {
+                        command.Connection.Open();
+                        using (SqlDataReader dataReader = command.ExecuteReader())
+                        {
+                            DataTable dataTable = new DataTable();
+                            dataTable.Load(dataReader);
+                            streams = JsonConvert.SerializeObject(dataTable);
+                            if (streams == null) Console.WriteLine("nix da");
+                        }
+                    }
+                }
+            }
+            catch (SqlException e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+
+
+            /*
+            // Nach passenden InputStreams filtern
+            SqlConnectionHelper.connect((connection) =>
             {
                 string queryString = null;
 
@@ -151,91 +238,95 @@ namespace MatchingService.Services
 
 
             });
-            return streams;
-        }
-
-        public string GetMatchingOutputStreams(int inputstreamId)
-        {
-            string streams = string.Empty;
-
-            int? materialFK = null;
-            int? energySourceFK = null;
-            int? amount = null;
-
-
-
-            // Attribute vom Outputstream laden
-            SqlConnectionHelper.Connect((connection) =>
-            {
-                string queryString;
-                queryString = @$"SELECT stream_view.fk_material, stream_view.fk_energy_source, stream_view.amount FROM stream_unmatched
-	                                LEFT join stream_view
-	                                ON stream_unmatched.id = stream_view.id
-                                    WHERE stream_unmatched.id = {inputstreamId}";
-
-                using (SqlCommand command = new SqlCommand(queryString, connection))
-                {
-                    command.Connection.Open();
-
-                    using (SqlDataReader dataReader = command.ExecuteReader())
-                    {
-                        dataReader.Read();
-                        materialFK = dataReader.GetInt32(0);
-                        energySourceFK = dataReader.GetInt32(1);
-                        amount = dataReader.GetInt32(3);
-                    }
-                }
-            });
-
-
-
-            // Nach passenden InputStreams filtern
-            SqlConnectionHelper.Connect((connection) =>
-            {
-                string queryString = null;
-
-                if (materialFK == null)
-                {
-                    queryString = @$"SELECT stream_enterprise_id.enterprise_id, stream_view.* FROM stream_unmatched
-                                                LEFT JOIN stream_enterprise_id
-                                                    ON stream_unmatched.id = stream_enterprise_id.stream_id
-	                                            LEFT join stream_view
-	                                                ON stream_unmatched.id = stream_view.id
-                                                LEFT JOIN enterprise
-													ON stream_enterprise_id.enterprise_id = enterprise.id
-                                                WHERE stream_view.is_output = 1 AND stream_view.fk_material = {materialFK};";
-                }
-
-                else // energySourceFk != null
-                {
-                    queryString = @$"SELECT stream_enterprise_id.enterprise_id, stream_view.* FROM stream_unmatched
-                                                LEFT JOIN stream_enterprise_id
-                                                    ON stream_unmatched.id = stream_enterprise_id.stream_id
-	                                            LEFT join stream_view
-	                                                ON stream_unmatched.id = stream_view.id
-                                                LEFT JOIN enterprise
-													ON stream_enterprise_id.enterprise_id = enterprise.id
-                                                WHERE stream_view.is_output = 1 AND stream_view.fk_energy_source = {energySourceFK};";
-
-                }
-
-                using (SqlCommand command = new SqlCommand(queryString, connection))
-                {
-                    command.Connection.Open();
-                    using (SqlDataReader dataReader = command.ExecuteReader())
-                    {
-                        DataTable dataTable = new DataTable();
-                        dataTable.Load(dataReader);
-                        streams = JsonConvert.SerializeObject(dataTable);
-                    }
-                }
-            });
-            return streams;
-        }
 
         */
+            return streams;
+        }
+        
 
-        public int propose(int enterpriseId, bool selectedIsInput, int selectedStreamId, int requestedStreamId, float amount, float priceProposal, string comment)
+            /*
+                    public string GetMatchingOutputStreams(int inputstreamId)
+                    {
+                        string streams = string.Empty;
+
+                        int? materialFK = null;
+                        int? energySourceFK = null;
+                        int? amount = null;
+
+
+
+                        // Attribute vom Outputstream laden
+                        SqlConnectionHelper.Connect((connection) =>
+                        {
+                            string queryString;
+                            queryString = @$"SELECT stream_view.fk_material, stream_view.fk_energy_source, stream_view.amount FROM stream_unmatched
+                                                LEFT join stream_view
+                                                ON stream_unmatched.id = stream_view.id
+                                                WHERE stream_unmatched.id = {inputstreamId}";
+
+                            using (SqlCommand command = new SqlCommand(queryString, connection))
+                            {
+                                command.Connection.Open();
+
+                                using (SqlDataReader dataReader = command.ExecuteReader())
+                                {
+                                    dataReader.Read();
+                                    materialFK = dataReader.GetInt32(0);
+                                    energySourceFK = dataReader.GetInt32(1);
+                                    amount = dataReader.GetInt32(3);
+                                }
+                            }
+                        });
+
+
+
+                        // Nach passenden InputStreams filtern
+                        SqlConnectionHelper.Connect((connection) =>
+                        {
+                            string queryString = null;
+
+                            if (materialFK == null)
+                            {
+                                queryString = @$"SELECT stream_enterprise_id.enterprise_id, stream_view.* FROM stream_unmatched
+                                                            LEFT JOIN stream_enterprise_id
+                                                                ON stream_unmatched.id = stream_enterprise_id.stream_id
+                                                            LEFT join stream_view
+                                                                ON stream_unmatched.id = stream_view.id
+                                                            LEFT JOIN enterprise
+                                                                ON stream_enterprise_id.enterprise_id = enterprise.id
+                                                            WHERE stream_view.is_output = 1 AND stream_view.fk_material = {materialFK};";
+                            }
+
+                            else // energySourceFk != null
+                            {
+                                queryString = @$"SELECT stream_enterprise_id.enterprise_id, stream_view.* FROM stream_unmatched
+                                                            LEFT JOIN stream_enterprise_id
+                                                                ON stream_unmatched.id = stream_enterprise_id.stream_id
+                                                            LEFT join stream_view
+                                                                ON stream_unmatched.id = stream_view.id
+                                                            LEFT JOIN enterprise
+                                                                ON stream_enterprise_id.enterprise_id = enterprise.id
+                                                            WHERE stream_view.is_output = 1 AND stream_view.fk_energy_source = {energySourceFK};";
+
+                            }
+
+                            using (SqlCommand command = new SqlCommand(queryString, connection))
+                            {
+                                command.Connection.Open();
+                                using (SqlDataReader dataReader = command.ExecuteReader())
+                                {
+                                    DataTable dataTable = new DataTable();
+                                    dataTable.Load(dataReader);
+                                    streams = JsonConvert.SerializeObject(dataTable);
+                                }
+                            }
+                        });
+                        return streams;
+                    }
+
+                    */
+
+            public int propose(int enterpriseId, bool selectedIsInput, int selectedStreamId, int requestedStreamId, float amount, float priceProposal, string comment)
         {
             string streams = string.Empty;
             int matchID = -1;

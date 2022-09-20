@@ -39,8 +39,8 @@ namespace EnterpriseManagement.Controllers
             return Ok(streamsJSON);
         }
 
-
-        [HttpGet("inputstreams/allmatching/{outputStreamId}")] //  api/matching/inputstreams/allmatching/{outputStreamId}
+        */
+        [HttpGet("inputstreams/allmatching/{outputStreamId}")] //  api/matches/inputstreams/allmatching/{outputStreamId}
         public ActionResult GetMatchingOuputStreams(int outputStreamId)
         {
             string streamsJSON = _streamMatchingService.GetMatchingInputStreams(outputStreamId);
@@ -49,6 +49,7 @@ namespace EnterpriseManagement.Controllers
 
             return Ok(streamsJSON);
         }
+        /*
 
         [HttpGet("outputstreams/allmatching/{inputStreamId}")] // api/matching/outputstreams/allmatching/{intputStreamId}
         public ActionResult GetMatchingInputStreams(int inputStreamId)
