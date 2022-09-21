@@ -35,7 +35,7 @@ namespace DataManagementService.Controllers
         /// create production line
         /// </summary>
         /// <returns></returns>
-        [HttpPost("/create/")]
+        [HttpPost("create/")]
         public IActionResult Create(int productionFacilityId, string name)
         {
             string productionLine = _productionLineService.Create(productionFacilityId, name);
@@ -49,16 +49,15 @@ namespace DataManagementService.Controllers
         /// update a production line
         /// </summary>
         /// <returns></returns>
-        [HttpPost("/update/")]
-        public IActionResult Update(int id, int? productionLineId, string? name)
+        [HttpPost("update/")]
+        public IActionResult Update(int id, int? productionFacilityId, string? name)
         {
-            int updatedRows = _productionLineService.Update(id, productionLineId, name);
+            int updatedRows = _productionLineService.Update(id, productionFacilityId, name);
 
             Console.WriteLine("API Abfrage durchgeführt");
 
             return Ok(updatedRows);
         }
-
     }
 }
 

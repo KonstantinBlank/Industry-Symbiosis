@@ -56,7 +56,8 @@ namespace DataManagementService.Services
 
             string enterpriseQuery = @"INSERT INTO production_facility
                                            (name,
-                                           fk_address)
+                                           fk_enterprise,
+                                           fk_post_address)
                                        VALUES
 		                                   (@name,
 		                                    @fk_enterprise,
@@ -68,7 +69,7 @@ namespace DataManagementService.Services
             parameterPairsEnterprise.Add(new KeyValuePair<string, object>("fk_enterprise", productionFacility.EnterpriseId));
             parameterPairsEnterprise.Add(new KeyValuePair<string, object>("fk_post_address", productionFacility.Address.Id));
             int productionFacilityId = SqlConnectionHelper.CreateEntry(enterpriseQuery, parameterPairsEnterprise);
-            productionFacility.Address.SetId(productionFacilityId);
+            productionFacility.SetId(productionFacilityId);
 
             Console.WriteLine("address and production facility were successfully created.");
 

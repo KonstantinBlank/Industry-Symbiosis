@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System;
 using MatchingService.Services;
+using MatchingService.Interfaces;
 
 namespace EnterpriseManagement.Controllers
 {

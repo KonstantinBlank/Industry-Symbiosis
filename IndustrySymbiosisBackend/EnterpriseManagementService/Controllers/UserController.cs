@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
 using EnterpriseManagement.Services;
+using EnterpriseManagement.Interfaces;
 
 namespace EnterpriseManagement.Controllers
 {
@@ -8,7 +9,7 @@ namespace EnterpriseManagement.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private UserService _userService = new UserService();
+        private IUserService _userService = new UserService();
 
 
         [HttpGet("get/{userId}")]

@@ -58,8 +58,14 @@ namespace DataManagementService.Services
             IDictionary<string, object> parameterPairs = new Dictionary<string, object>();
             parameterPairs.Add("fk_production_line_process", stream.ProductionLineProcessId);
             parameterPairs.Add("is_input", stream.IsInput);
-            parameterPairs.Add("fk_material", stream.MaterialId);
-            parameterPairs.Add("fk_energy_source", stream.EnergyId);
+            if (stream.MaterialId != null)
+            {
+                parameterPairs.Add("fk_material", stream.MaterialId);
+            }
+            if (stream.EnergyId != null)
+            {
+                parameterPairs.Add("fk_energy_source", stream.EnergyId);
+            }
             parameterPairs.Add("amount", stream.Amount);
             parameterPairs.Add("interval", stream.Interval);
 

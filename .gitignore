@@ -214,3 +214,4 @@ IndustrySymbiosisBackend/DataManagementService/bin/Release/netcoreapp3.1/DataMan
 /IndustrySymbiosisBackend/MatchingService/bin/Release/netcoreapp3.1/System.Data.SqlClient.dll
 /IndustrySymbiosisBackend/MatchingService/bin/Release/netcoreapp3.1/runtimes/win-x86/native/sni.dll
 /IndustrySymbiosisBackend/MatchingService/bin/Release/netcoreapp3.1/runtimes/unix/lib/netcoreapp2.1/System.Data.SqlClient.dll
+IndustrySymbiosisBackend/MatchingService/obj/project.nuget.cache

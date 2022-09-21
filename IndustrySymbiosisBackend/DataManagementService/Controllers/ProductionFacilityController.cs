@@ -1,4 +1,5 @@
 ﻿using System;
+using DataManagementService.Interfaces;
 using DataManagementService.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,7 +9,7 @@ namespace DataManagementService.Controllers
     [Route("api/production_facilities/")]
     public class ProductionFacilityController : ControllerBase
     {
-        private ProductionFacilityService _productionFacilityService;
+        private IProductionFacilityService _productionFacilityService;
 
         public ProductionFacilityController()
         {

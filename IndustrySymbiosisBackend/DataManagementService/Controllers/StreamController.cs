@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace DataManagementService.Controllers
 {
     [ApiController]
-    [Route("api/stream/")]
+    [Route("api/streams/")]
     public class StreamController : ControllerBase
     {
         private StreamService _streamService;
@@ -15,7 +15,7 @@ namespace DataManagementService.Controllers
             _streamService = new StreamService();
         }
 
-        [HttpGet("/get/all/{enterpriseId}")]
+        [HttpGet("get/{enterpriseId}")]
         public ActionResult Get(int enterpriseID)
         { 
         
@@ -29,25 +29,27 @@ namespace DataManagementService.Controllers
         [HttpPost("create/")]
         public ActionResult Create(int productionLineProcessId, bool isInput, int amount, int interval, int? materialId = null, int? energyId = null)
         {
+            string message = "";
             if ((materialId == null && energyId == null) || (materialId != null && energyId != null))
             {
-                Console.WriteLine("You need to pass either a materialId or a energyId.");
+                message = "You need to pass either a materialId or a energyId.";
+                Console.WriteLine(message);
             }
             else
             {
-                _streamService.Create(productionLineProcessId, isInput, materialId, energyId, amount, interval);
+                message = _streamService.Create(productionLineProcessId, isInput, materialId, energyId, amount, interval);
                 Console.WriteLine("API abfrage erfolgreich");
             }
 
-            return Ok();
+            return Ok(message);
         }
 
         [HttpPost("update/")]
         public ActionResult Update(int id, int? productionLineProcessId = null, bool? isInput = null, int? materialId = null, int? energyId = null, int? amount = null, int? interval = null)
         {
-            _streamService.Update(id, productionLineProcessId, isInput, materialId, energyId, amount, interval);
+            int updatedRows = _streamService.Update(id, productionLineProcessId, isInput, materialId, energyId, amount, interval);
             Console.WriteLine("API abfrage erfolgreich");
-            return Ok();
+            return Ok(updatedRows);
         }
     }
 }
