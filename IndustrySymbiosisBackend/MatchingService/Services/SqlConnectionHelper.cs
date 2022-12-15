@@ -121,5 +121,23 @@ namespace DataManagementService.Services
             }
         }
 
+        public static void Connect(Action<SqlConnection> action)
+        {
+            try
+            {
+                string connectionString = Constants.DB_CONNECTION_STRING;
+
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    action(connection);
+                }
+
+            }
+            catch (SqlException error)
+            {
+                Console.WriteLine(error.ToString());
+            }
+        }
+
     }
 }

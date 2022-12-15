@@ -15,11 +15,10 @@ namespace DataManagementService.Controllers
             _streamService = new StreamService();
         }
 
-        [HttpGet("get/{enterpriseId}")]
-        public ActionResult Get(int enterpriseID)
-        { 
-        
-            string streamsJSON = _streamService.Get(enterpriseID);
+        [HttpGet("get/{processId}")]
+        public ActionResult Get(int processId)
+        {
+            string streamsJSON = _streamService.Get(processId);
 
             Console.WriteLine("API abfrage erfolgreich");
 

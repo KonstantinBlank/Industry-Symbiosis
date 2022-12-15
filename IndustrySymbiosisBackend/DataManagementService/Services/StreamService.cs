@@ -14,20 +14,11 @@ namespace DataManagementService.Services
         {
         }
 
-        public string Get(int enterpriseId)
+        public string Get(int processId)
         {
-            string query = @$"SELECT stream_enterprise_id.enterprise_id, stream_view.id AS id, stream_view.is_emission, stream_view.renewable_share, stream_view.is_intern AS is_internal_energy, production_facility.name AS production_facility, production_line.name AS production_line, production_line_process.name AS production_line_process, stream_view.amount, stream_view.unit, stream_view.interval, stream_view.is_input, stream_view.is_private FROM stream_unmatched
-                                 LEFT JOIN stream_enterprise_id
-                                 ON stream_unmatched.id = stream_enterprise_id.stream_id
-	                                LEFT JOIN stream_view
-	                                ON stream_unmatched.id = stream_view.id
-										LEFT JOIN production_facility
-										ON stream_enterprise_id.production_facility_id = production_facility.id
-											LEFT JOIN production_line
-											ON stream_enterprise_id.production_line_id = production_line.id
-												LEFT JOIN production_line_process
-												ON stream_enterprise_id.production_line_process_id = production_line_process.id
-                                 WHERE stream_view.is_input = 1 AND stream_enterprise_id.enterprise_id = {enterpriseId};";
+            string query = $@"SELECT * 
+                              FROM stream_view
+                              WHERE fk_production_line_process = {processId};";
 
             string streams = SqlConnectionHelper.GetTable(query);
 
