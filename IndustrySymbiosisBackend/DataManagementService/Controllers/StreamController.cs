@@ -1,127 +1,54 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Threading.Tasks;
+using DataManagementService.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 
 namespace DataManagementService.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/streams/")]
     public class StreamController : ControllerBase
     {
+        private StreamService _streamService;
 
-        /// <summary>
-        /// get all enterprise Streams by enterpriseID
-        /// </summary>
-        /// <param name="enterpriseID"></param>
-        /// <returns>
-        /// json with all Streams from an Enterprise
-        /// </returns>
-        [HttpGet("streams/enterprises/{enterpriseID}")]
-        public ActionResult GetStreamsByEnterpriseID(string enterpriseID)
+        public StreamController()
         {
-            string JSONString = string.Empty;
+            _streamService = new StreamService();
+        }
 
-
-            try
-            {
-                string connectionString;
-                connectionString = "Data Source=tcp:insym.database.windows.net,1433;Initial Catalog=Industrie-Symbiose_db;User Id=insym_adm@insym;Password=jio:90u?..Q++";
-
-                using (SqlConnection connection = new SqlConnection(connectionString)) //auto close connection with using
-                {
-                    string queryString;
-                    queryString = @$"SELECT enterprise_user.first_name, enterprise_user.surname, enterprise_user.email
-                                    FROM enterprise_user
-                                    WHERE enterprise_user.fk_enterprise = {enterpriseID};";
-
-                    using (SqlCommand command = new SqlCommand(queryString, connection))
-                    {
-                        command.Connection.Open();
-                        using (SqlDataReader dataReader = command.ExecuteReader())
-                        {
-                            DataTable dataTable = new DataTable();
-                            dataTable.Load(dataReader);
-                            JSONString = JsonConvert.SerializeObject(dataTable);
-                        }
-                    }
-                }
-            }
-            catch (SqlException e)
-            {
-                Console.WriteLine(e.ToString());
-            }
+        [HttpGet("get/{processId}")]
+        public ActionResult Get(int processId)
+        {
+            string streamsJSON = _streamService.Get(processId);
 
             Console.WriteLine("API abfrage erfolgreich");
 
-            return Ok(JSONString);
-    }
+            return Ok(streamsJSON);
+        }
 
-        /// <summary>
-        /// get all Production Line Process Streams by productionlineprocessID
-        /// </summary>
-        /// <param name="productionlineprocessID"></param>
-        /// <returns>
-        /// json with all Streams from an Production Line Process
-        /// </returns>
-        [HttpGet("streams/productionprocess/{productionlineprocessID}")]
-        public ActionResult GetStreamsByProductionLineProcessID(string productionlineprocessID)
+        [HttpPost("create/")]
+        public ActionResult Create(int productionLineProcessId, bool isInput, int amount, int interval, int? materialId = null, int? energyId = null)
         {
-            string JSONString = string.Empty;
-
-
-            try
+            string message = "";
+            if ((materialId == null && energyId == null) || (materialId != null && energyId != null))
             {
-                string connectionString;
-                connectionString = "Data Source=tcp:insym.database.windows.net,1433;Initial Catalog=Industrie-Symbiose_db;User Id=insym_adm@insym;Password=jio:90u?..Q++";
-
-                using (SqlConnection connection = new SqlConnection(connectionString)) //auto close connection with using
-                {
-                    string queryString;
-                    queryString = @$"SELECT enterprise_user.first_name, enterprise_user.surname, enterprise_user.email
-                                    FROM enterprise_user
-                                    WHERE enterprise_user.fk_enterprise = {productionlineprocessID};";
-
-                    using (SqlCommand command = new SqlCommand(queryString, connection))
-                    {
-                        command.Connection.Open();
-                        using (SqlDataReader dataReader = command.ExecuteReader())
-                        {
-                            DataTable dataTable = new DataTable();
-                            dataTable.Load(dataReader);
-                            JSONString = JsonConvert.SerializeObject(dataTable);
-                        }
-                    }
-                }
+                message = "You need to pass either a materialId or a energyId.";
+                Console.WriteLine(message);
             }
-            catch (SqlException e)
+            else
             {
-                Console.WriteLine(e.ToString());
+                message = _streamService.Create(productionLineProcessId, isInput, materialId, energyId, amount, interval);
+                Console.WriteLine("API abfrage erfolgreich");
             }
 
+            return Ok(message);
+        }
+
+        [HttpPost("update/")]
+        public ActionResult Update(int id, int? productionLineProcessId = null, bool? isInput = null, int? materialId = null, int? energyId = null, int? amount = null, int? interval = null)
+        {
+            int updatedRows = _streamService.Update(id, productionLineProcessId, isInput, materialId, energyId, amount, interval);
             Console.WriteLine("API abfrage erfolgreich");
-
-            return Ok(JSONString);
+            return Ok(updatedRows);
         }
-
-
-
-        // set production facility by facilityProcessID
-
-        [HttpPost("streams/")]
-        public ActionResult CreateProductionFacilitysByEnterpriseID(string facilityProcessID )
-        {
-            return Ok();
-
-        }
-
-
-
     }
 }
-

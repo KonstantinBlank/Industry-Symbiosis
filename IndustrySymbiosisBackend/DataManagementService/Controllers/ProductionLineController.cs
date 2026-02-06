@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace DataManagementService.Controllers
 {
     [ApiController]
-    [Route("api/")]
+    [Route("api/production_lines/")]
     public class ProductionLineController : ControllerBase
     {
         private ProductionLineService _productionLineService;
@@ -21,44 +21,43 @@ namespace DataManagementService.Controllers
         /// <returns>
         /// json with all production lines from the specified production facility
         /// </returns>
-        [HttpGet("production_lines/{productionFacilityId}")]
-        public ActionResult GetProductionLines(int productionFacilityId)
+        [HttpGet("get/{productionFacilityId}")]
+        public ActionResult Get(int productionFacilityId)
         {
-            string productionLinesJSON = _productionLineService.Get(productionFacilityId);
+            string productionLines = _productionLineService.Get(productionFacilityId);
                 
             Console.WriteLine("API abfrage erfolgreich");
 
-            return Ok(productionLinesJSON);
+            return Ok(productionLines);
         }
 
         /// <summary>
         /// create production line
         /// </summary>
         /// <returns></returns>
-        [HttpPost("production_lines/create/")]
-        public IActionResult CreateProductionLine(int productionFacilityId, string name)
+        [HttpPost("create/")]
+        public IActionResult Create(int productionFacilityId, string name)
         {
-            string CreatedProductionLinesAsJSON = _productionLineService.Create(productionFacilityId, name);
+            string productionLine = _productionLineService.Create(productionFacilityId, name);
 
             Console.WriteLine("API Abfrage durchgeführt");
 
-            return Ok(CreatedProductionLinesAsJSON);
+            return Ok(productionLine);
         }
 
         /// <summary>
         /// update a production line
         /// </summary>
         /// <returns></returns>
-        [HttpPost("production_lines/update/")]
-        public IActionResult UpdateProductionLine(int productionLineId, string name)
+        [HttpPost("update/")]
+        public IActionResult Update(int id, int? productionFacilityId, string? name)
         {
-            int CreatedProductionLines = _productionLineService.Update(productionLineId, name);
+            int updatedRows = _productionLineService.Update(id, productionFacilityId, name);
 
             Console.WriteLine("API Abfrage durchgeführt");
 
-            return Ok(CreatedProductionLines);
+            return Ok(updatedRows);
         }
-
     }
 }
 

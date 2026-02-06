@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace DataManagementService.Controllers
 {
     [ApiController]
-    [Route("api/")]
+    [Route("api/production_line_processes/")]
     public class ProductionLineProcessController : ControllerBase
     {
         private ProductionLineProcessService _productionLineProcessService;
@@ -16,13 +16,11 @@ namespace DataManagementService.Controllers
         }
 
         /// <summary>
-        /// get all production lines from a production facility
+        /// get all production lines processes from a production line
         /// </summary>
-        /// <returns>
-        /// json with all production lines from the specified production facility
-        /// </returns>
-        [HttpGet("production_line_processes/{productionLineId}")]
-        public ActionResult GetProductionLineProcesses(int productionLineId)
+        /// <returns></returns>
+        [HttpGet("get/{productionLineId}")]
+        public ActionResult Get(int productionLineId)
         {
             string productionLineProcessesJSON = _productionLineProcessService.Get(productionLineId);
 
@@ -32,11 +30,11 @@ namespace DataManagementService.Controllers
         }
 
         /// <summary>
-        /// create production line
+        /// create production line process
         /// </summary>
         /// <returns></returns>
-        [HttpPost("production_line_processes/create/")]
-        public IActionResult CreateProductionLineProcess(int productionLineId, string name)
+        [HttpPost("create/")]
+        public IActionResult Create(int productionLineId, string name)
         {
             string CreatedProductionLineProcessJSON = _productionLineProcessService.Create(productionLineId, name);
 
@@ -46,13 +44,13 @@ namespace DataManagementService.Controllers
         }
 
         /// <summary>
-        /// update a production line
+        /// update a production line process
         /// </summary>
         /// <returns></returns>
-        [HttpPost("production_line_processes/update/")]
-        public IActionResult UpdateProductionLineProcess(int productionLineId, string name)
+        [HttpPost("update/")]
+        public IActionResult Update(int id, int? productionLineId, string? name)
         {
-            int UpdatedProductionLineProcesses = _productionLineProcessService.Update(productionLineId, name);
+            int UpdatedProductionLineProcesses = _productionLineProcessService.Update(id, productionLineId, name);
 
             Console.WriteLine("API Abfrage durchgeführt");
 
@@ -60,4 +58,3 @@ namespace DataManagementService.Controllers
         }
     }
 }
-

@@ -2,105 +2,143 @@
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System;
-using System.Data;
-using System.Data.SqlClient;
+using MatchingService.Services;
+using MatchingService.Interfaces;
 
-namespace EnterpriseManagementService.Controllers
+namespace EnterpriseManagement.Controllers
 {
-    [Route("api/[controller]")] // api/enterprisemanagement
+    [Route("api/matches/")]
     [ApiController]
     public class MatchingController : ControllerBase
     {
-        /// <summary>
-        /// get all enterprises
-        /// </summary>
-        /// <returns>
-        /// json with all enterprises with address
-        /// </returns>
-        [HttpGet("enterprises")] // api/enterprisemanagement/enterprises
-        public ActionResult GetEnterprises()
+        private StreamMatchingService _streamMatchingService { get; }
+
+        public MatchingController(StreamMatchingService matchingService)
         {
-            string JSONString = string.Empty;
-
-            try
-            {
-                string connectionString;
-                connectionString = "Data Source=tcp:insym.database.windows.net,1433;Initial Catalog=Industrie-Symbiose_db;User Id=insym_adm@insym;Password=jio:90u?..Q++";
-
-                using (SqlConnection connection = new SqlConnection(connectionString)) //auto close connection with using
-                {
-                    string queryString;
-                    queryString = @"SELECT 
-                                    enterprise.id, enterprise.name, enterprise_address.address_record_1, enterprise_address.address_record_2, enterprise_address.street, enterprise_address.house_number, enterprise_address.postcode, enterprise_address.city
-                                    FROM enterprise
-                                    LEFT JOIN enterprise_address
-                                    ON enterprise.fk_address = enterprise_address.id;";
-
-                    using (SqlCommand command = new SqlCommand(queryString, connection))
-                    {
-                        command.Connection.Open();
-                        using (SqlDataReader dataReader = command.ExecuteReader())
-                        {
-                            DataTable dataTable = new DataTable();
-                            dataTable.Load(dataReader);
-                            JSONString = JsonConvert.SerializeObject(dataTable);
-                        }
-                    }
-                }
-            }
-            catch (SqlException e)
-            {
-                Console.WriteLine(e.ToString());
-            }
-
-            Console.WriteLine("API abfrage erfolgreich");
-            return Ok(JSONString);
+            _streamMatchingService = matchingService;
         }
 
-        /// <summary>
-        /// get all users by enterpriseID
-        /// </summary>
-        /// <returns>
-        /// json with all users with user attributes from an Enterprise
-        /// </returns>
-        [HttpGet("user/{enterpriseID}")] // api//user/{enterpriseID}
-        public ActionResult GetUsersByEnterpriseID(string enterpriseID)
+
+        [HttpGet("outputstreams/get/enterprise/{enterpriseId}")] 
+        public ActionResult GetAllOutputStreams(int enterpriseId)
         {
-            string JSONString = string.Empty;
-
-            try
-            {
-                string connectionString;
-                connectionString = "Data Source=tcp:insym.database.windows.net,1433;Initial Catalog=Industrie-Symbiose_db;User Id=insym_adm@insym;Password=jio:90u?..Q++";
-
-                using (SqlConnection connection = new SqlConnection(connectionString)) //auto close connection with using
-                {
-                    string queryString;
-                    queryString = @$"SELECT enterprise_user.first_name, enterprise_user.surname, enterprise_user.email
-                                    FROM enterprise_user
-                                    WHERE enterprise_user.fk_enterprise = {enterpriseID};";
-
-                    using (SqlCommand command = new SqlCommand(queryString, connection))
-                    {
-                        command.Connection.Open();
-                        using (SqlDataReader dataReader = command.ExecuteReader())
-                        {
-                            DataTable dataTable = new DataTable();
-                            dataTable.Load(dataReader);
-                            JSONString = JsonConvert.SerializeObject(dataTable);
-                        }
-                    }
-                }
-            }
-            catch (SqlException e)
-            {
-                Console.WriteLine(e.ToString());
-            }
+            string streamsJSON = _streamMatchingService.GetAllOutputStreams(enterpriseId);
 
             Console.WriteLine("API abfrage erfolgreich");
 
-            return Ok(JSONString);
+            return Ok(streamsJSON);
         }
 
+        [HttpGet("inputstreams/get/enterprise/{enterpriseId}")] 
+        public ActionResult GetAllInputStreams(int enterpriseId)
+        {
+            string streamsJSON = _streamMatchingService.GetAllInputStreams(enterpriseId);
+
+            Console.WriteLine("API abfrage erfolgreich");
+
+            return Ok(streamsJSON);
+        }
+
+        [HttpGet("allstreams/get/enterprise/{enterpriseId}")]
+        public ActionResult GetAllStreams(int enterpriseId)
+        {
+            string streamsJSON = _streamMatchingService.GetAllStreams(enterpriseId);
+
+            Console.WriteLine("API abfrage erfolgreich");
+
+            return Ok(streamsJSON);
+        }
+
+
+        //----------------------------
+
+
+        [HttpGet("inputstreams/enterprise/{enterpriseID}")] // api/matches/inputstreams/enterprise/{enterpriseID}
+        public ActionResult GetAvailableInputStreams(int enterpriseId)
+        {
+            string streamsJSON = _streamMatchingService.GetAvailableInputStreams(enterpriseId);
+
+            Console.WriteLine("API abfrage erfolgreich");
+
+            return Ok(streamsJSON);
+        }
+
+        
+
+        [HttpGet("outputstreams/enterprise/{enterpriseID}")] // api/matches/outputstreams/enterprise/{enterpriseID}
+        public ActionResult GetAvailableOutputStreams(int enterpriseId)
+        {
+            string streamsJSON = _streamMatchingService.GetAllInputStreams(enterpriseId);
+
+            Console.WriteLine("API abfrage erfolgreich");
+
+            return Ok(streamsJSON);
+        }
+
+        
+        [HttpGet("outputstreams/allmatching/{inputStreamId}")] //  api/matches/outputstreams/allmatching/{inputStreamId}
+        public ActionResult GetMatchingOuputStreams(int inputStreamId)
+        {
+            string streamsJSON = _streamMatchingService.GetMatchingOutputStreams(inputStreamId);
+
+            Console.WriteLine("API abfrage erfolgreich");
+
+            return Ok(streamsJSON);
+        }
+        
+        [HttpGet("inputstreams/allmatching/{outputStreamId}")] // api/matches/inputstreams/allmatching/{outputStreamId}
+        public ActionResult GetMatchingInputStreams(int outputStreamId)
+        {
+            string streamsJSON = _streamMatchingService.GetMatchingInputStreams(outputStreamId);
+
+            Console.WriteLine("API abfrage erfolgreich");
+
+            return Ok(streamsJSON);
+        }
+
+        [HttpGet("streams/proposed/outgoing/{enterpriseId}")] // api/matches/outputstreams/all/
+        public ActionResult proposeOutgoing(int enterpriseId, bool selectedIsInput, int selectedStreamId, int requestedStreamId, float amount, float? priceProposal = null, string comment = null)
+        {
+            _streamMatchingService.propose(enterpriseId, selectedIsInput, selectedStreamId, requestedStreamId, amount, priceProposal, comment);
+            return Ok();
+        }
+
+        [HttpGet("streams/proposed/incoming/{enterpriseId}")] // api/matches/outputstreams/all/
+        public ActionResult proposeIncoming(string enterpriseId)
+        {
+
+            return Ok();
+        }
+
+        [HttpPost("propose/")] // propose
+        public ActionResult propose(int enterpriseId, bool selectedIsInput, int selectedStreamId, int requestedStreamId, float amount, float priceProposal = 0, string comment = "default")
+        {
+            int result = _streamMatchingService.propose(enterpriseId, selectedIsInput, selectedStreamId, requestedStreamId, amount, priceProposal, comment);
+
+            Console.WriteLine("API abfrage erfolgreich");
+
+            return Ok(result);
+        }
+
+        [HttpPost("cancel/")] // api/matches/outputstreams/all/
+        public ActionResult cancel(string selectedStreamId, string requestedStreamId)
+        {
+
+            return Ok();
+        }
+
+        [HttpPost("decline/")] // api/matches/outputstreams/all/
+        public ActionResult decline(string selectedStreamId, string requestedStreamId)
+        {
+
+            return Ok();
+        }
+
+        [HttpPost("accept/")] // api/matches/outputstreams/all/
+        public ActionResult accept(string matchId)
+        {
+
+            return Ok();
+        }
     }
 }
