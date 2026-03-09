@@ -5,8 +5,8 @@ The solution enables resource trading within an industrial network by repurposin
 
 The following shows the architure poster (in German). 
 
-![Alt text](./Notizen/Architekturposter.svg)
+![Alt text](./notes/Architekturposter.svg)
 
 The following shows the entity relationship model of the database. 
 
-![Alt text](./Notizen/Industry-Symbiosis-ERM.png)
+![Alt text](./notes/Industry-Symbiosis-ERM.png)
