@@ -2,8 +2,6 @@
 
 A prototype platform developed for a university seminar, designed to help reduce resource waste efficiently.
 
-## About The Project
-
 This solution enables resource trading within an industrial network by repurposing production waste. Competitive advantages are created through the efficient trading of material and energy flows, which benefits members, the network, and the environment. 
 
 Typically, such trading within networks relies on manual networking and personal discussions. Our solution stands out by providing:
