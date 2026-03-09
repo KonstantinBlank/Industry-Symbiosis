@@ -41,7 +41,7 @@ Here is a look at the planned user interface, including the main dashboard and t
 ## Architecture & Database
 
 **Architecture Poster (German):**
-![Architecture Poster](./notes/Architekturposter.svg)
+![Architecture Poster](./notes/Architekturposter.png)
 
 **Entity Relationship Model (ERM):**
 ![Database ERM](./notes/Industry-Symbiosis-ERM.png)
