@@ -23,10 +23,10 @@ Here is a look at the planned user interface, including the main dashboard and t
 **Dashboard Concept:**
 ![Dashboard Concept Screenshot](./screenshots/screenshot_dashboard.png)
 
-**Match overview Concept:**
+**Match Overview Concept:**
 ![Match Overview Screenshot](./screenshots/screenshot_matchoverview.png)
 
-**Match details Concept:**
+**Match Details Concept:**
 ![Match Details Screenshot](./screenshots/screenshot_match_details.png)
 
 **Map Concept:**
