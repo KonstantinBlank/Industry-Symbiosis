@@ -16,6 +16,28 @@ Typically, such trading within networks relies on manual networking and personal
 * **Frontend:** The user interface is currently under development. 
     * [Frontend GitHub Repository](https://github.com/KonstantinBlank/Industry-Symbiosis-Frontend)
 
+## Concept Previews
+
+Here is a look at the planned user interface, including the main dashboard and the energy/material flow visualizations:
+
+**Dashboard Concept:**
+![Dashboard Concept Screenshot](./screenshots/screenshot_dashboard.png)
+
+**Match overview Concept:**
+![Match Overview Screenshot](./screenshots/screenshot_matchoverview.png)
+
+**Match details Concept:**
+![Match Details Screenshot](./screenshots/screenshot_match_details.png)
+
+**Map Concept:**
+![Map Concept Screenshot](./screenshots/screenshot_map.png)
+
+**Sankey Diagram Concept (Resource Flows):**
+![Sankey Diagram Concept Screenshot](./screenshots/screenshot_sankey.png)
+
+**Production Line Setup Concept:**
+![Production_Setup Concept Screenshot](./screenshots/screenshot_production_setup.png)
+
 ## Architecture & Database
 
 **Architecture Poster (German):**
