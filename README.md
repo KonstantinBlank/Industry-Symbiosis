@@ -1,5 +1,7 @@
 # Industry-Symbiosis: Resource Trading for Industrial Networks
 
+The prototype web app can be accessed here: https://frontend-industry-symbiosis-azure.vercel.app/Dashboard/1/Hans
+
 A prototype platform developed for a university seminar, designed to help reduce resource waste efficiently.
 
 This solution enables resource trading within an industrial network by repurposing production waste. Competitive advantages are created through the efficient trading of material and energy flows, which benefits members, the network, and the environment. 
